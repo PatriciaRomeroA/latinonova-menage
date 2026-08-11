@@ -18,7 +18,7 @@ export default function Home() {
       <main id="main-content">
         <HeroSection benefits={content.trustBenefits} />
         <ServicesSection services={content.services} />
-        <AboutSection benefits={content.aboutBenefits} />
+        <AboutSection />
         <QuoteBanner />
       </main>
       <SiteFooter columns={content.footerColumns} contacts={content.contacts} />

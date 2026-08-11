@@ -10,19 +10,19 @@ export const homePageContent: HomePageContent = {
     { label: "Contact", href: "#contact" },
   ],
   contacts: [
-    { label: "Montréal & Rive-Nord", icon: "⌖" },
-    { label: "Lundi - Vendredi : 7h00 - 18h00", icon: "◷" },
-    { label: "514 123-4567", href: "tel:+15141234567", icon: "☎" },
+    { label: "Montréal & Rive-Nord", icon: "location" },
+    { label: "Lundi - Vendredi : 7h00 - 18h00", icon: "clock" },
+    { label: "514 123-4567", href: "tel:+15141234567", icon: "phone" },
     {
       label: "info@latinovamenage.com",
       href: "mailto:info@latinovamenage.com",
-      icon: "✉",
+      icon: "email",
     },
   ],
   trustBenefits: [
-    { label: "Service fiable et professionnel", icon: "✓" },
-    { label: "Réponse rapide 24h", icon: "24" },
-    { label: "Satisfaction garantie", icon: "★" },
+    { label: "Service fiable et professionnel", icon: "shieldCheck" },
+    { label: "Réponse rapide 24h", icon: "replyFast" },
+    { label: "Satisfaction garantie", icon: "satisfaction" },
   ],
   services: [
     {
@@ -36,7 +36,7 @@ export const homePageContent: HomePageContent = {
         "Entretien régulier et ponctuel",
       ],
       imageKey: "commercial",
-      icon: "▦",
+      icon: "commercial",
     },
     {
       title: "Nettoyage institutionnel",
@@ -49,7 +49,7 @@ export const homePageContent: HomePageContent = {
         "Organismes et OSBL",
       ],
       imageKey: "institutional",
-      icon: "◆",
+      icon: "institutional",
     },
     {
       title: "Nettoyage après rénovation",
@@ -61,7 +61,7 @@ export const homePageContent: HomePageContent = {
         "Prêt pour l’occupation",
       ],
       imageKey: "renovation",
-      icon: "✦",
+      icon: "renovation",
     },
     {
       title: "Nettoyage résidentiel",
@@ -72,14 +72,14 @@ export const homePageContent: HomePageContent = {
         "Grand ménage",
       ],
       imageKey: "residential",
-      icon: "⌂",
+      icon: "residential",
     },
   ],
   aboutBenefits: [
-    { label: "Équipe professionnelle", icon: "◎" },
-    { label: "Produits de qualité et écologiques", icon: "♧" },
-    { label: "Respect de vos espaces", icon: "◇" },
-    { label: "Flexibilité et adaptabilité", icon: "✦" },
+    { label: "Équipe professionnelle", icon: "team" },
+    { label: "Produits de qualité et écologiques", icon: "eco" },
+    { label: "Respect de vos espaces", icon: "respect" },
+    { label: "Flexibilité et adaptabilité", icon: "flexibility" },
   ],
   footerColumns: [
     {

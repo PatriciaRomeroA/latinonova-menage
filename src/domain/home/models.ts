@@ -1,3 +1,5 @@
+import type { AppIconName } from "@/src/shared/icons/icon-registry";
+
 export type NavigationItem = {
   readonly label: string;
   readonly href: string;
@@ -7,12 +9,12 @@ export type NavigationItem = {
 export type ContactItem = {
   readonly label: string;
   readonly href?: string;
-  readonly icon: string;
+  readonly icon: AppIconName;
 };
 
 export type Benefit = {
   readonly label: string;
-  readonly icon: string;
+  readonly icon: AppIconName;
 };
 
 export type Service = {
@@ -20,7 +22,7 @@ export type Service = {
   readonly description: string;
   readonly benefits: readonly string[];
   readonly imageKey: "commercial" | "institutional" | "renovation" | "residential";
-  readonly icon: string;
+  readonly icon: AppIconName;
 };
 
 export type FooterColumn = {

@@ -1,4 +1,5 @@
 import type { NavigationItem } from "@/src/domain/home/models";
+import { AppIcon } from "@/src/shared/icons/AppIcon";
 import { Brand } from "./Brand";
 import { MobileNavigation } from "./MobileNavigation";
 
@@ -20,7 +21,7 @@ export function MainHeader({ navigation }: MainHeaderProps) {
               aria-current={index === 0 ? "page" : undefined}
             >
               {item.label}
-              {item.hasChildren ? <span aria-hidden="true">⌄</span> : null}
+              {item.hasChildren ? <AppIcon name="chevronDown" size={12} /> : null}
             </a>
           ))}
         </nav>

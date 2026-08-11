@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 type BrandProps = {
   readonly compact?: boolean;
   readonly inverted?: boolean;
@@ -10,10 +12,15 @@ export function Brand({ compact = false, inverted = false }: BrandProps) {
       href="#accueil"
       aria-label="Latinova Ménage Inc., retour à l’accueil"
     >
-      <span className="brand__spark" aria-hidden="true">✦</span>
-      <span className="brand__roof" aria-hidden="true">⌂</span>
-      <span className="brand__name">Latinova</span>
-      <span className="brand__tag">Ménage Inc.</span>
+      <Image
+        className="brand__image"
+        src="/images/latinova-logo.png"
+        alt=""
+        fill
+        priority={!compact}
+        unoptimized
+        sizes={compact ? "210px" : "260px"}
+      />
     </a>
   );
 }

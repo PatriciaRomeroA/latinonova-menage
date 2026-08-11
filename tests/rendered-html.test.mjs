@@ -32,9 +32,9 @@ test("server-renders the complete Latinova landing page", async () => {
   assert.match(html, /Latinova Ménage Inc\. \| Services de nettoyage/);
   assert.match(html, /La propreté/);
   assert.match(html, /qui inspire/);
-  assert.match(html, /confiance\./);
+  assert.match(html, /confiance/i);
   assert.match(html, /Demandez votre soumission gratuite/);
-  assert.match(html, /Votre partenaire en propreté/);
+  assert.match(html, /Deux jeunes entrepreneurs\./);
   assert.match(html, /href="tel:\+15141234567"/);
   assert.match(html, /href="mailto:info@latinovamenage\.com"/);
 });
@@ -70,4 +70,26 @@ test("keeps mobile navigation accessible and keyboard-aware", async () => {
   assert.match(mobileNavigation, /event\.key !== "Tab"/);
   assert.match(mobileNavigation, /document\.body\.style\.overflow = "hidden"/);
   assert.match(mobileNavigation, /onClick=\{closeMenu\}/);
+});
+
+test("centralizes icon rendering through the shared AppIcon layer", async () => {
+  const [appIcon, registry, homeContent] = await Promise.all([
+    readFile(
+      new URL("../src/shared/icons/AppIcon.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../src/shared/icons/icon-registry.ts", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../src/domain/home/content.ts", import.meta.url),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(appIcon, /@iconify\/react/);
+  assert.match(appIcon, /data-icon=\{name\}/);
+  assert.match(registry, /pickIcon\(lucideIcons, "map-pinned"\)/);
+  assert.doesNotMatch(homeContent, /[⌖◷☎✉✓★▦◆✦⌂◎♧◇]/);
 });

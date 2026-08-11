@@ -1,7 +1,7 @@
 export const imageCatalog = {
   hero: {
-    src: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1800&q=88",
-    alt: "Professionnelle de l’entretien réalisant un nettoyage minutieux",
+    src: "/images/latinova-equipe-nettoyage.png",
+    alt: "Équipe Latinova Ménage réalisant l’entretien professionnel de bureaux",
   },
   commercial: {
     src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=85",

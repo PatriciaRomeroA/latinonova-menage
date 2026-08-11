@@ -19,15 +19,8 @@ function ServiceCard({ service }: { readonly service: Service }) {
           sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 25vw"
         />
       </div>
-      <span className="service-card__icon" aria-hidden="true">{service.icon}</span>
       <div className="service-card__body">
         <h3>{service.title}</h3>
-        <p>{service.description}</p>
-        <ul>
-          {service.benefits.map((benefit) => (
-            <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>
-          ))}
-        </ul>
       </div>
     </article>
   );
@@ -39,7 +32,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
       <div className="container">
         <div className="section-heading section-heading--centered">
           <p className="eyebrow">Nos services</p>
-          <h2 id="services-title">Un nettoyage adapté à <strong>chaque besoin.</strong></h2>
+          <h2 id="services-title">Un nettoyage adapté à <strong>chaque besoin</strong></h2>
         </div>
         <div className="services__grid">
           {services.map((service) => (

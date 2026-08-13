@@ -21,7 +21,6 @@ type QuoteFormValues = {
   readonly workAtHeights: WorkAtHeights;
   readonly subject: string;
   readonly context: string;
-  readonly files: readonly File[];
 };
 
 type QuoteFormErrors = Partial<Record<keyof QuoteFormValues, string>>;
@@ -42,7 +41,6 @@ const emptyValues: QuoteFormValues = {
   workAtHeights: "",
   subject: "",
   context: "",
-  files: [],
 };
 
 function validate(values: QuoteFormValues): QuoteFormErrors {
@@ -278,19 +276,6 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
           aria-invalid={Boolean(errors.context)}
           aria-describedby={errors.context ? `${formId}-context-error` : undefined}
           onChange={(event) => updateValue("context", event.target.value)}
-        />
-      </Field>
-
-      <Field id={`${formId}-files`} label="Attach document(s)">
-        <input
-          id={`${formId}-files`}
-          className="quote-form__file"
-          name="files"
-          type="file"
-          multiple
-          onChange={(event) =>
-            updateValue("files", Array.from(event.target.files ?? []))
-          }
         />
       </Field>
 

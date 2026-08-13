@@ -1053,10 +1053,6 @@ button:focus-visible {
   padding: 0;
 }
 
-.quote-form__file {
-  padding: 10px !important;
-}
-
 .quote-form__status {
   margin: 0;
   padding: 12px 14px;
@@ -1107,9 +1103,9 @@ button:focus-visible {
   display: grid;
   width: min(1450px, calc(100% - 64px));
   min-height: 720px;
-  grid-template-columns: minmax(300px, 0.68fr) minmax(540px, 1.16fr) minmax(340px, 0.72fr);
+  grid-template-columns: minmax(300px, 0.9fr) minmax(520px, 1.1fr);
   align-items: center;
-  gap: clamp(22px, 2.3vw, 40px);
+  gap: clamp(28px, 3.2vw, 56px);
 }
 
 .quote-page__copy {
@@ -1151,8 +1147,8 @@ button:focus-visible {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 640px;
-  margin: 0;
+  max-width: 680px;
+  margin-left: auto;
   padding: clamp(28px, 2.5vw, 42px);
   border: 1px solid rgba(255, 255, 255, 0.76);
   border-radius: 22px;
@@ -1165,26 +1161,6 @@ button:focus-visible {
     inset 0 1px 0 rgba(255, 255, 255, 0.86);
   -webkit-backdrop-filter: blur(26px) saturate(135%);
   backdrop-filter: blur(26px) saturate(135%);
-}
-
-.quote-page__image {
-  min-height: 520px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 34px;
-  box-shadow: 0 24px 54px rgba(3, 21, 47, 0.12);
-}
-
-.quote-page__image::after {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(3, 21, 47, 0.08));
-  content: "";
-}
-
-.quote-page__image img {
-  object-fit: cover;
-  object-position: 56% 50%;
 }
 
 .footer {
@@ -1664,7 +1640,7 @@ button:focus-visible {
   .quote-page__layout {
     width: min(var(--container), calc(100% - 48px));
     min-height: 0;
-    grid-template-columns: minmax(0, 0.84fr) minmax(460px, 1.16fr);
+    grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
     gap: 28px;
   }
 
@@ -1687,12 +1663,6 @@ button:focus-visible {
   .quote-page__form-card {
     max-width: none;
     margin: 0;
-  }
-
-  .quote-page__image {
-    grid-column: 1 / -1;
-    min-height: 320px;
-    border-radius: 24px;
   }
 
   .footer__panel {
@@ -1954,13 +1924,6 @@ button:focus-visible {
     border-radius: 18px;
     -webkit-backdrop-filter: blur(16px) saturate(120%);
     backdrop-filter: blur(16px) saturate(120%);
-  }
-
-  .quote-page__image {
-    width: 100%;
-    min-height: 270px;
-    margin-top: 22px;
-    border-radius: 18px;
   }
 
   .footer--overlap {

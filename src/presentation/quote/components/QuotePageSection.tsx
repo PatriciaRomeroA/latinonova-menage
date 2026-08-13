@@ -1,6 +1,4 @@
-import Image from "next/image";
 import { SERVICES, type ServiceSlug } from "@/src/domain/services/services";
-import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
 import { QuoteForm } from "./QuoteForm";
 
 type QuotePageSectionProps = {
@@ -29,16 +27,6 @@ export function QuotePageSection({ initialService }: QuotePageSectionProps) {
 
         <div className="quote-page__form-card">
           <QuoteForm initialService={initialService} services={SERVICES} />
-        </div>
-
-        <div className="quote-page__image" aria-hidden="true">
-          <Image
-            src={imageCatalog.hero.src}
-            alt=""
-            fill
-            priority
-            sizes="(max-width: 900px) 100vw, 38vw"
-          />
         </div>
       </div>
     </section>

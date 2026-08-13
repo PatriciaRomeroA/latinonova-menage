@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 type BrandProps = {
   readonly compact?: boolean;
@@ -6,10 +9,13 @@ type BrandProps = {
 };
 
 export function Brand({ compact = false, inverted = false }: BrandProps) {
+  const pathname = usePathname();
+  const href = pathname === "/" ? "#accueil" : "/";
+
   return (
     <a
       className={`brand${compact ? " brand--compact" : ""}${inverted ? " brand--inverted" : ""}`}
-      href="#accueil"
+      href={href}
       aria-label="Latinova Ménage Inc., retour à l’accueil"
     >
       <Image

@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { NavigationItem } from "@/src/domain/home/models";
+import { QuoteTrigger } from "@/src/presentation/quote/components/QuoteTrigger";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type MobileNavigationProps = {
@@ -117,9 +119,9 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
                       </button>
                       {isExpanded ? (
                         <div className="mobile-nav__submenu">
-                          <a href="/services" onClick={closeMenu}>
+                          <Link href="/services" onClick={closeMenu}>
                             Tous les services
-                          </a>
+                          </Link>
                           {item.children.map((child) => (
                             <a href={child.href} key={child.href} onClick={closeMenu}>
                               {child.label}
@@ -131,9 +133,9 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
                   );
                 })}
               </nav>
-              <a className="button button--primary" href="#soumission" onClick={closeMenu}>
+              <QuoteTrigger className="button button--primary" onClick={closeMenu}>
                 Soumission gratuite
-              </a>
+              </QuoteTrigger>
             </div>
           </div>,
           document.body,

@@ -1,6 +1,7 @@
-import Link from "next/link";
 import type { Service } from "@/src/domain/services/models";
+import type { ServiceSlug } from "@/src/domain/services/services";
 import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
+import { QuoteTrigger } from "@/src/presentation/quote/components/QuoteTrigger";
 import { SplitContentSection } from "@/src/presentation/shared/components/SplitContentSection";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
@@ -45,12 +46,15 @@ export function ServiceDetail({ service }: ServiceDetailProps) {
           </ul>
         </div>
         <p className="service-detail__closing">{service.closingText}</p>
-        <Link className="button button--primary service-detail__cta" href="/#soumission">
+        <QuoteTrigger
+          className="button button--primary service-detail__cta"
+          initialService={service.slug as ServiceSlug}
+        >
           {service.ctaLabel}
           <span className="button__icon-slot" aria-hidden="true">
             <AppIcon className="button__icon" name="arrowRight" size={14} />
           </span>
-        </Link>
+        </QuoteTrigger>
       </div>
     </SplitContentSection>
   );

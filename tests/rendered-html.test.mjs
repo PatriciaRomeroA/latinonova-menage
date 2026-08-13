@@ -34,6 +34,7 @@ test("server-renders the complete Latinova landing page", async () => {
   assert.match(html, /qui inspire/);
   assert.match(html, /confiance/i);
   assert.match(html, /Demandez votre soumission gratuite/);
+  assert.match(html, /href="\/soumission"/);
   assert.match(html, /Deux jeunes entrepreneurs\./);
   assert.match(html, /href="tel:\+15141234567"/);
   assert.match(html, /href="mailto:info@latinovamenage\.com"/);
@@ -89,8 +90,41 @@ test("renders every service slug with the reusable detail template", async () =>
     assert.match(html, new RegExp(`data-service-slug="${slug}"`));
     assert.match(html, new RegExp(expectedItem, "i"));
     assert.match(html, /Demander une soumission/i);
-    assert.match(html, /href="\/#soumission"/);
+    assert.match(html, new RegExp(`href="/soumission\\?service=${slug}"`));
   }
+});
+
+test("renders the soumission page with the reusable quote form", async () => {
+  const response = await render("/soumission");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /Une propreté professionnelle, adaptée à vos besoins/);
+  assert.match(html, /First Name/);
+  assert.match(html, /Sélectionner un service/);
+  assert.doesNotMatch(html, /Requested sub-service/i);
+});
+
+test("centralizes the quote form and derives service options from SERVICES", async () => {
+  const [formSource, serviceDetailSource] = await Promise.all([
+    readFile(
+      new URL("../src/presentation/quote/components/QuoteForm.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../src/presentation/services/components/ServiceDetail.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(formSource, /services\.map/);
+  assert.match(formSource, /Sélectionner un service/);
+  assert.doesNotMatch(formSource, /Requested sub-service/i);
+  assert.doesNotMatch(formSource, /requestedSubService/i);
+  assert.match(serviceDetailSource, /initialService=\{service\.slug/);
 });
 
 test("returns the framework not-found response for an invalid service slug", async () => {

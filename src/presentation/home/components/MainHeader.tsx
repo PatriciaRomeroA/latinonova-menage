@@ -1,7 +1,9 @@
+import Link from "next/link";
 import type { NavigationItem } from "@/src/domain/home/models";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 import { Brand } from "./Brand";
 import { MobileNavigation } from "./MobileNavigation";
+import { QuoteTrigger } from "@/src/presentation/quote/components/QuoteTrigger";
 
 type MainHeaderProps = {
   readonly navigation: readonly NavigationItem[];
@@ -54,9 +56,9 @@ export function MainHeader({
                   id="desktop-services-menu"
                   role="menu"
                 >
-                  <a href="/services" role="menuitem">
+                  <Link href="/services" role="menuitem">
                     Tous les services
-                  </a>
+                  </Link>
                   {item.children.map((child) => (
                     <a href={child.href} key={child.href} role="menuitem">
                       {child.label}
@@ -67,9 +69,9 @@ export function MainHeader({
             );
           })}
         </nav>
-        <a className="button button--primary header-cta" href="#soumission">
+        <QuoteTrigger className="button button--primary header-cta">
           Soumission gratuite
-        </a>
+        </QuoteTrigger>
         <MobileNavigation navigation={navigation} />
       </div>
     </header>

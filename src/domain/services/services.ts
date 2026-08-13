@@ -20,8 +20,8 @@ export const SERVICES = [
     ],
     closingText: "Service ponctuel ou entretien récurrent selon vos besoins.",
     ctaLabel: "Demander une soumission",
-    image: SERVICE_PLACEHOLDER,
-    imageAlt: "Emplacement réservé à une image de nettoyage commercial",
+    image: "/images/services/commercial_cleaning.png",
+    imageAlt: "Espace de bureaux moderne, lumineux et propre",
     imageKey: "commercial",
   },
   {
@@ -41,8 +41,8 @@ export const SERVICES = [
     closingText:
       "Un plan d'entretien personnalisé est établi lors de la soumission.",
     ctaLabel: "Demander une soumission",
-    image: SERVICE_PLACEHOLDER,
-    imageAlt: "Emplacement réservé à une image de nettoyage institutionnel",
+    image: "/images/services/institutional_cleaning.png",
+    imageAlt: "Corridor lumineux d’un établissement de santé",
     imageKey: "institutional",
   },
   {
@@ -64,8 +64,8 @@ export const SERVICES = [
     closingText:
       "Chaque projet est évalué selon l'état et la superficie des lieux.",
     ctaLabel: "Demander une soumission",
-    image: SERVICE_PLACEHOLDER,
-    imageAlt: "Emplacement réservé à une image de nettoyage après rénovation",
+    image: "/images/services/renovation_cleaning.png",
+    imageAlt: "Espace intérieur en cours de rénovation",
     imageKey: "renovation",
   },
   {
@@ -86,8 +86,8 @@ export const SERVICES = [
     closingText:
       "Le service est évalué selon l'accès, la hauteur et la superficie vitrée.",
     ctaLabel: "Demander une soumission",
-    image: SERVICE_PLACEHOLDER,
-    imageAlt: "Emplacement réservé à une image de nettoyage de vitres",
+    image: "/images/services/glass_cleaning.png",
+    imageAlt: "Nettoyage de vitres professionnel",
     imageKey: "windows",
   },
   {
@@ -108,8 +108,10 @@ export const SERVICES = [
     closingText:
       "Les services sont personnalisés selon la propriété et les besoins demandés.",
     ctaLabel: "Demander une soumission",
-    image: SERVICE_PLACEHOLDER,
-    imageAlt: "Emplacement réservé à une image de nettoyage résidentiel",
+    image: "/images/services/residential_cleaning.png",
+    imageAlt: "Salon résidentiel moderne et soigneusement entretenu",
     imageKey: "residential",
   },
 ] as const satisfies readonly Service[];
+
+export type ServiceSlug = (typeof SERVICES)[number]["slug"];

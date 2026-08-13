@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Service } from "@/src/domain/services/models";
 import type { ServiceSlug } from "@/src/domain/services/services";
+import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type QuoteFormProps = {
   readonly initialService?: ServiceSlug;
@@ -126,6 +127,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
     }
 
     setIsSubmitting(true);
+    console.log("Soumission form payload:", values);
     await Promise.resolve();
     setIsSubmitting(false);
     setSubmitMessage(
@@ -209,19 +211,14 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
       </Field>
 
       <Field id={`${formId}-service`} label="Service">
-        <select
+        <FormListbox
           id={`${formId}-service`}
           name="service"
+          options={serviceOptions}
+          placeholder="Sélectionner un service"
           value={values.service}
-          onChange={(event) => updateValue("service", event.target.value)}
-        >
-          <option value="">Sélectionner un service</option>
-          {serviceOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => updateValue("service", value)}
+        />
       </Field>
 
       <fieldset className="quote-form__fieldset">
@@ -249,21 +246,16 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
       </fieldset>
 
       <Field error={errors.subject} id={`${formId}-subject`} label="Subject" required>
-        <select
+        <FormListbox
           id={`${formId}-subject`}
           name="subject"
+          ariaDescribedBy={errors.subject ? `${formId}-subject-error` : undefined}
+          ariaInvalid={Boolean(errors.subject)}
+          options={SUBJECT_OPTIONS}
+          placeholder="Choisir"
           value={values.subject}
-          aria-invalid={Boolean(errors.subject)}
-          aria-describedby={errors.subject ? `${formId}-subject-error` : undefined}
-          onChange={(event) => updateValue("subject", event.target.value)}
-        >
-          <option value="">Choisir</option>
-          {SUBJECT_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => updateValue("subject", value)}
+        />
       </Field>
 
       <Field error={errors.context} id={`${formId}-context`} label="Context" required>
@@ -312,6 +304,178 @@ function Field({ children, error, id, label, required = false }: FieldProps) {
         <p className="quote-form__error" id={`${id}-error`}>
           {error}
         </p>
+      ) : null}
+    </div>
+  );
+}
+
+type ListboxOption = {
+  readonly value: string;
+  readonly label: string;
+};
+
+type FormListboxProps = {
+  readonly ariaDescribedBy?: string;
+  readonly ariaInvalid?: boolean;
+  readonly id: string;
+  readonly name: string;
+  readonly onChange: (value: string) => void;
+  readonly options: readonly ListboxOption[];
+  readonly placeholder: string;
+  readonly value: string;
+};
+
+function FormListbox({
+  ariaDescribedBy,
+  ariaInvalid = false,
+  id,
+  name,
+  onChange,
+  options,
+  placeholder,
+  value,
+}: FormListboxProps) {
+  const listboxId = `${id}-listbox`;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedIndex = options.findIndex((option) => option.value === value);
+  const fallbackIndex = selectedIndex >= 0 ? selectedIndex : 0;
+  const [activeIndex, setActiveIndex] = useState(fallbackIndex);
+  const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : undefined;
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isOpen]);
+
+  function chooseOption(option: ListboxOption) {
+    onChange(option.value);
+    setIsOpen(false);
+  }
+
+  function openListbox() {
+    setActiveIndex(fallbackIndex);
+    setIsOpen(true);
+  }
+
+  function toggleListbox() {
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+
+    openListbox();
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!isOpen) {
+        openListbox();
+      }
+      setActiveIndex((current) => {
+        const direction = event.key === "ArrowDown" ? 1 : -1;
+        return (current + direction + options.length) % options.length;
+      });
+      return;
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+      }
+      setActiveIndex(0);
+      return;
+    }
+
+    if (event.key === "End") {
+      event.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+      }
+      setActiveIndex(options.length - 1);
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      if (isOpen) {
+        chooseOption(options[activeIndex]);
+        return;
+      }
+
+      openListbox();
+      return;
+    }
+
+    if (event.key === "Escape") {
+      setIsOpen(false);
+    }
+  }
+
+  return (
+    <div className="quote-listbox" ref={containerRef}>
+      <input name={name} type="hidden" value={value} />
+      <button
+        aria-controls={listboxId}
+        aria-describedby={ariaDescribedBy}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        className="quote-listbox__trigger"
+        data-invalid={ariaInvalid ? "true" : undefined}
+        id={id}
+        type="button"
+        onClick={toggleListbox}
+        onKeyDown={handleKeyDown}
+      >
+        <span className={selectedOption ? undefined : "quote-listbox__placeholder"}>
+          {selectedOption?.label ?? placeholder}
+        </span>
+        <AppIcon className="quote-listbox__chevron" name="chevronDown" size={14} />
+      </button>
+
+      {isOpen ? (
+        <div
+          aria-activedescendant={`${id}-option-${activeIndex}`}
+          className="quote-listbox__menu"
+          id={listboxId}
+          role="listbox"
+          tabIndex={-1}
+        >
+          {options.map((option, index) => {
+            const isSelected = option.value === value;
+            const isActive = index === activeIndex;
+
+            return (
+              <button
+                aria-selected={isSelected}
+                className={`quote-listbox__option${isSelected ? " is-selected" : ""}${isActive ? " is-active" : ""}`}
+                id={`${id}-option-${index}`}
+                key={option.value}
+                role="option"
+                type="button"
+                onClick={() => chooseOption(option)}
+                onMouseEnter={() => setActiveIndex(index)}
+              >
+                <span>{option.label}</span>
+                {isSelected ? (
+                  <AppIcon className="quote-listbox__check" name="check" size={14} />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
       ) : null}
     </div>
   );

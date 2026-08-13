@@ -34,6 +34,7 @@ export const iconRegistry = {
   email: pickIcon(lucideIcons, "mail"),
   chevronDown: pickIcon(lucideIcons, "chevron-down"),
   arrowRight: pickIcon(lucideIcons, "arrow-right"),
+  check: pickIcon(lucideIcons, "check"),
   menu: pickIcon(lucideIcons, "menu"),
   close: pickIcon(lucideIcons, "x"),
   shieldCheck: pickIcon(lucideIcons, "shield-check"),

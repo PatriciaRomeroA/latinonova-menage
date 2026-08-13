@@ -19,6 +19,10 @@ export const imageCatalog = {
     src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=85",
     alt: "Salon résidentiel moderne et soigneusement entretenu",
   },
+  windows: {
+    src: "/images/services/service-placeholder.svg",
+    alt: "Emplacement réservé à une image de nettoyage de vitres",
+  },
   about: {
     src: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=85",
     alt: "Équipe professionnelle réunie dans un bureau lumineux",

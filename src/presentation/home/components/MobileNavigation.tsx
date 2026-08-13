@@ -11,13 +11,8 @@ type MobileNavigationProps = {
 
 export function MobileNavigation({ navigation }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -61,7 +56,7 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
   }
 
   const menuOverlay =
-    isOpen && mounted
+    isOpen
       ? createPortal(
           <div className="mobile-nav__backdrop" onClick={closeMenu}>
             <div

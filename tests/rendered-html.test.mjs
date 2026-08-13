@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
+async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("http://localhost/", {
+    new Request(`http://localhost${pathname}`, {
       headers: { accept: "text/html" },
     }),
     {
@@ -39,7 +39,7 @@ test("server-renders the complete Latinova landing page", async () => {
   assert.match(html, /href="mailto:info@latinovamenage\.com"/);
 });
 
-test("renders the four configured service cards", async () => {
+test("renders every centrally configured service card on the home page", async () => {
   const response = await render();
   const html = await response.text();
 
@@ -47,12 +47,85 @@ test("renders the four configured service cards", async () => {
     "Nettoyage commercial",
     "Nettoyage institutionnel",
     "Nettoyage après rénovation",
+    "Nettoyage de vitres",
     "Nettoyage résidentiel",
   ]) {
     assert.match(html, new RegExp(service, "i"));
   }
 
-  assert.equal((html.match(/class="service-card"/g) ?? []).length, 4);
+  assert.equal((html.match(/class="service-card"/g) ?? []).length, 5);
+});
+
+test("renders the services directory from the central collection", async () => {
+  const response = await render("/services");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  for (const service of [
+    "Nettoyage commercial",
+    "Nettoyage institutionnel",
+    "Nettoyage après rénovation",
+    "Nettoyage de vitres",
+    "Nettoyage résidentiel",
+  ]) {
+    assert.match(html, new RegExp(service, "i"));
+  }
+
+  assert.equal((html.match(/class="services-page-card"/g) ?? []).length, 5);
+});
+
+test("renders every service slug with the reusable detail template", async () => {
+  const services = [
+    ["nettoyage-commercial", "Bureaux et espaces corporatifs"],
+    ["nettoyage-institutionnel", "Garderies"],
+    ["nettoyage-apres-renovation", "Élimination de la poussière"],
+    ["nettoyage-de-vitres", "Vitres intérieures"],
+    ["nettoyage-residentiel", "Grand ménage"],
+  ];
+
+  for (const [slug, expectedItem] of services) {
+    const response = await render(`/services/${slug}`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, new RegExp(`data-service-slug="${slug}"`));
+    assert.match(html, new RegExp(expectedItem, "i"));
+    assert.match(html, /Demander une soumission/i);
+    assert.match(html, /href="\/#soumission"/);
+  }
+});
+
+test("returns the framework not-found response for an invalid service slug", async () => {
+  const response = await render("/services/service-inexistant");
+  assert.equal(response.status, 404);
+});
+
+test("keeps service data and resolution centralized", async () => {
+  const [servicesSource, resolverSource, detailSource] = await Promise.all([
+    readFile(
+      new URL("../src/domain/services/services.ts", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../src/domain/services/service-resolver.ts", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../src/presentation/services/components/ServiceDetail.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  const slugs = [...servicesSource.matchAll(/slug: "([^"]+)"/g)].map(
+    ([, slug]) => slug,
+  );
+  assert.equal(slugs.length, 5);
+  assert.equal(new Set(slugs).size, slugs.length);
+  assert.match(resolverSource, /SERVICES\.find/);
+  assert.match(detailSource, /service\.items\.map/);
+  assert.doesNotMatch(detailSource, /service\.slug\s*===|switch\s*\(/);
 });
 
 test("keeps mobile navigation accessible and keyboard-aware", async () => {

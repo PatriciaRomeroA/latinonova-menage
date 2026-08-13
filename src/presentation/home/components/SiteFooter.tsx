@@ -5,11 +5,19 @@ import { Brand } from "./Brand";
 type SiteFooterProps = {
   readonly columns: readonly FooterColumn[];
   readonly contacts: readonly ContactItem[];
+  readonly overlapsBanner?: boolean;
 };
 
-export function SiteFooter({ columns, contacts }: SiteFooterProps) {
+export function SiteFooter({
+  columns,
+  contacts,
+  overlapsBanner = false,
+}: SiteFooterProps) {
   return (
-    <footer className="footer" id="contact">
+    <footer
+      className={`footer${overlapsBanner ? " footer--overlap" : " footer--standard"}`}
+      id="contact"
+    >
       <div className="footer__panel">
         <div className="container footer__shell">
           <div className="footer__grid">

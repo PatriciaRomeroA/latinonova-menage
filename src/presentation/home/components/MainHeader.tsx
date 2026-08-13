@@ -5,20 +5,24 @@ import { MobileNavigation } from "./MobileNavigation";
 
 type MainHeaderProps = {
   readonly navigation: readonly NavigationItem[];
+  readonly activeNavigationHref?: string;
 };
 
-export function MainHeader({ navigation }: MainHeaderProps) {
+export function MainHeader({
+  navigation,
+  activeNavigationHref = "/#accueil",
+}: MainHeaderProps) {
   return (
     <header className="site-header">
       <div className="container site-header__inner">
         <Brand />
         <nav className="desktop-nav" aria-label="Navigation principale">
-          {navigation.map((item, index) => (
+          {navigation.map((item) => (
             <a
-              className={index === 0 ? "is-active" : undefined}
+              className={item.href === activeNavigationHref ? "is-active" : undefined}
               href={item.href}
               key={item.label}
-              aria-current={index === 0 ? "page" : undefined}
+              aria-current={item.href === activeNavigationHref ? "page" : undefined}
             >
               {item.label}
               {item.hasChildren ? <AppIcon name="chevronDown" size={12} /> : null}

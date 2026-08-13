@@ -1,5 +1,6 @@
 import Image from "next/image";
-import type { Service } from "@/src/domain/home/models";
+import Link from "next/link";
+import type { Service } from "@/src/domain/services/models";
 import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
 
 type ServicesSectionProps = {
@@ -10,7 +11,11 @@ function ServiceCard({ service }: { readonly service: Service }) {
   const image = imageCatalog[service.imageKey];
 
   return (
-    <article className="service-card">
+    <Link
+      className="service-card"
+      href={`/services/${service.slug}`}
+      aria-label={`Découvrir ${service.title}`}
+    >
       <div className="service-card__image">
         <Image
           src={image.src}
@@ -22,7 +27,7 @@ function ServiceCard({ service }: { readonly service: Service }) {
       <div className="service-card__body">
         <h3>{service.title}</h3>
       </div>
-    </article>
+    </Link>
   );
 }
 
@@ -36,12 +41,12 @@ export function ServicesSection({ services }: ServicesSectionProps) {
         </div>
         <div className="services__grid">
           {services.map((service) => (
-            <ServiceCard key={service.title} service={service} />
+            <ServiceCard key={service.slug} service={service} />
           ))}
         </div>
-        <a className="button button--outline services__cta" href="#soumission">
+        <Link className="button button--outline services__cta" href="/services">
           Voir tous nos services
-        </a>
+        </Link>
       </div>
     </section>
   );

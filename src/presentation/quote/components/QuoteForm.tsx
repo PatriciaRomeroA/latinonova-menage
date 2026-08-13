@@ -57,10 +57,6 @@ function validate(values: QuoteFormValues): QuoteFormErrors {
     errors.lastName = "Le nom est requis.";
   }
 
-  if (!values.company.trim()) {
-    errors.company = "L'entreprise est requise.";
-  }
-
   if (!values.email.trim()) {
     errors.email = "Le courriel est requis.";
   } else if (!emailPattern.test(values.email.trim())) {
@@ -172,7 +168,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         </Field>
       </div>
 
-      <Field error={errors.company} id={`${formId}-company`} label="Company" required>
+      <Field error={errors.company} id={`${formId}-company`} label="Company">
         <input
           id={`${formId}-company`}
           name="company"

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Service } from "@/src/domain/services/models";
+import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
 import { SplitContentSection } from "@/src/presentation/shared/components/SplitContentSection";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
@@ -8,13 +9,15 @@ type ServiceDetailProps = {
 };
 
 export function ServiceDetail({ service }: ServiceDetailProps) {
+  const image = imageCatalog[service.imageKey];
+
   return (
     <SplitContentSection
       ariaLabelledBy="service-detail-title"
       className="service-detail"
       image={{
-        src: service.image,
-        alt: service.imageAlt,
+        src: image.src,
+        alt: image.alt,
         priority: true,
         sizes: "(max-width: 800px) 100vw, 48vw",
       }}

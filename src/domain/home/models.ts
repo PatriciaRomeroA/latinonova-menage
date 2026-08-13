@@ -3,7 +3,7 @@ import type { AppIconName } from "@/src/shared/icons/icon-registry";
 export type NavigationItem = {
   readonly label: string;
   readonly href: string;
-  readonly hasChildren?: boolean;
+  readonly children?: readonly NavigationItem[];
 };
 
 export type ContactItem = {

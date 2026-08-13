@@ -1,17 +1,26 @@
-import type { HomePageContent } from "./models";
+import type { HomePageContent, NavigationItem } from "./models";
 import { SERVICES } from "@/src/domain/services/services";
 
-const navigationLinks = [
+const serviceLinks: readonly NavigationItem[] = SERVICES.map((service) => ({
+  label: service.title,
+  href: `/services/${service.slug}`,
+}));
+
+const navigationLinks: readonly NavigationItem[] = [
   { label: "Accueil", href: "/#accueil" },
-  { label: "Services", href: "/services", hasChildren: true },
+  { label: "Services", href: "/services" },
   { label: "Secteurs", href: "/#services" },
   { label: "À propos", href: "/#a-propos" },
   { label: "Soumission", href: "/#soumission" },
   { label: "Contact", href: "/#contact" },
-] as const;
+];
+
+const headerNavigation: readonly NavigationItem[] = navigationLinks.map((item) =>
+  item.href === "/services" ? { ...item, children: serviceLinks } : item,
+);
 
 export const homePageContent: HomePageContent = {
-  navigation: navigationLinks,
+  navigation: headerNavigation,
   contacts: [
     { label: "Montréal & Rive-Nord", icon: "location" },
     { label: "Lundi - Vendredi : 7h00 - 18h00", icon: "clock" },
@@ -40,10 +49,7 @@ export const homePageContent: HomePageContent = {
     },
     {
       title: "Services",
-      links: SERVICES.map((service) => ({
-        label: service.title,
-        href: `/services/${service.slug}`,
-      })),
+      links: serviceLinks,
     },
   ],
 };

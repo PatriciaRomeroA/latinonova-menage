@@ -198,20 +198,32 @@ button:focus-visible {
   gap: clamp(18px, 2.1vw, 34px);
 }
 
-.desktop-nav a {
+.desktop-nav__item {
+  position: relative;
+  height: 126px;
+  display: flex;
+  align-items: center;
+}
+
+.desktop-nav__link {
   position: relative;
   height: 126px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: #0f1e35;
+  cursor: pointer;
+  font: inherit;
   font-size: 14px;
   font-weight: 630;
   white-space: nowrap;
   transition: color 160ms ease;
 }
 
-.desktop-nav a::after {
+.desktop-nav__link::after {
   position: absolute;
   right: 0;
   bottom: 43px;
@@ -223,14 +235,85 @@ button:focus-visible {
   transition: transform 160ms ease;
 }
 
-.desktop-nav a:hover,
-.desktop-nav a.is-active {
+.desktop-nav__link:hover,
+.desktop-nav__link.is-active,
+.desktop-nav__item:hover .desktop-nav__link,
+.desktop-nav__item:focus-within .desktop-nav__link {
   color: var(--blue-700);
 }
 
-.desktop-nav a:hover::after,
-.desktop-nav a.is-active::after {
+.desktop-nav__link:hover::after,
+.desktop-nav__link.is-active::after,
+.desktop-nav__item:hover .desktop-nav__link::after,
+.desktop-nav__item:focus-within .desktop-nav__link::after {
   transform: scaleX(1);
+}
+
+.desktop-nav__chevron {
+  transition: transform 180ms ease;
+}
+
+.desktop-nav__item:hover .desktop-nav__chevron,
+.desktop-nav__item:focus-within .desktop-nav__chevron {
+  transform: rotate(180deg);
+}
+
+.desktop-nav__menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% - 24px);
+  left: 50%;
+  min-width: 290px;
+  padding: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: 0 20px 48px rgba(6, 35, 75, 0.14);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, -4px);
+  transition: opacity 160ms ease, visibility 160ms ease, transform 160ms ease;
+}
+
+.desktop-nav__menu::before {
+  position: absolute;
+  top: -18px;
+  right: 0;
+  left: 0;
+  height: 18px;
+  content: "";
+}
+
+.desktop-nav__item:hover .desktop-nav__menu,
+.desktop-nav__item:focus-within .desktop-nav__menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.desktop-nav__menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  color: #0f1e35;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.desktop-nav__menu a:first-child {
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.desktop-nav__menu a:hover,
+.desktop-nav__menu a:focus-visible {
+  background: var(--blue-100);
+  color: var(--blue-700);
 }
 
 .button {
@@ -1112,7 +1195,7 @@ button:focus-visible {
     gap: 16px;
   }
 
-  .desktop-nav a {
+  .desktop-nav__link {
     font-size: 12px;
   }
 
@@ -1218,14 +1301,54 @@ button:focus-visible {
     border-top: 1px solid var(--line);
   }
 
-  .mobile-nav__panel nav a {
+  .mobile-nav__panel nav a,
+  .mobile-nav__parent {
+    width: 100%;
     min-height: 58px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0;
+    border: 0;
     border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
     font-size: 18px;
     font-weight: 650;
+    text-align: left;
+  }
+
+  .mobile-nav__group {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mobile-nav__group > .mobile-nav__parent,
+  .mobile-nav__group > a {
+    border-bottom: 0;
+  }
+
+  .mobile-nav__chevron {
+    transition: transform 180ms ease;
+  }
+
+  .mobile-nav__parent.is-open .mobile-nav__chevron {
+    transform: rotate(180deg);
+  }
+
+  .mobile-nav__submenu {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 10px 12px;
+  }
+
+  .mobile-nav__submenu a {
+    min-height: 44px;
+    border-bottom: 0;
+    color: #314359;
+    font-size: 15px;
+    font-weight: 550;
   }
 
   .mobile-nav__arrow-slot {

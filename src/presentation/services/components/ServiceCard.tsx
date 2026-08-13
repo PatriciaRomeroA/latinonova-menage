@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Service } from "@/src/domain/services/models";
+import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type ServiceCardProps = {
@@ -8,13 +9,15 @@ type ServiceCardProps = {
 };
 
 export function ServiceCard({ service }: ServiceCardProps) {
+  const image = imageCatalog[service.imageKey];
+
   return (
     <article className="services-page-card">
       <Link href={`/services/${service.slug}`}>
         <div className="services-page-card__image">
           <Image
-            src={service.image}
-            alt={service.imageAlt}
+            src={image.src}
+            alt={image.alt}
             fill
             sizes="(max-width: 680px) 100vw, (max-width: 940px) 50vw, 33vw"
           />

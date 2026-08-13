@@ -12,7 +12,9 @@ export default function Home() {
   return (
     <SiteChrome activeNavigationHref="/#accueil" footerOverlapsBanner>
       <HeroSection benefits={content.trustBenefits} />
-      <ServicesSection services={SERVICES} />
+      <ServicesSection
+        services={SERVICES.filter((service) => service.slug !== "nettoyage-de-vitres")}
+      />
       <AboutSection />
       <QuoteBanner />
     </SiteChrome>

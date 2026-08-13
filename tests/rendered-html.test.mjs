@@ -47,13 +47,12 @@ test("renders every centrally configured service card on the home page", async (
     "Nettoyage commercial",
     "Nettoyage institutionnel",
     "Nettoyage après rénovation",
-    "Nettoyage de vitres",
     "Nettoyage résidentiel",
   ]) {
     assert.match(html, new RegExp(service, "i"));
   }
 
-  assert.equal((html.match(/class="service-card"/g) ?? []).length, 5);
+  assert.equal((html.match(/class="service-card"/g) ?? []).length, 4);
 });
 
 test("renders the services directory from the central collection", async () => {

@@ -1332,6 +1332,12 @@ button:focus-visible {
   line-height: 1.5;
 }
 
+.quote-form__status--error {
+  border-color: rgba(185, 28, 28, 0.24);
+  background: rgba(254, 242, 242, 0.82);
+  color: #7f1d1d;
+}
+
 .quote-form__submit {
   width: min(100%, 260px);
   min-height: 54px;

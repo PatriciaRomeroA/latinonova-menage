@@ -4,6 +4,12 @@ import type { Service } from "@/src/domain/services/models";
 import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
 
 type ServicesSectionProps = {
+  readonly copy: {
+    readonly eyebrow: string;
+    readonly titleHighlight: string;
+    readonly titlePrefix: string;
+    readonly viewAll: string;
+  };
   readonly services: readonly Service[];
 };
 
@@ -31,13 +37,13 @@ function ServiceCard({ service }: { readonly service: Service }) {
   );
 }
 
-export function ServicesSection({ services }: ServicesSectionProps) {
+export function ServicesSection({ copy, services }: ServicesSectionProps) {
   return (
     <section className="services section" id="services" aria-labelledby="services-title">
       <div className="container">
         <div className="section-heading section-heading--centered">
-          <p className="eyebrow">Nos services</p>
-          <h2 id="services-title">Un nettoyage adapté à <strong>chaque besoin</strong></h2>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h2 id="services-title">{copy.titlePrefix} <strong>{copy.titleHighlight}</strong></h2>
         </div>
         <div className="services__grid">
           {services.map((service) => (
@@ -45,7 +51,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
           ))}
         </div>
         <Link className="button button--outline services__cta" href="/services">
-          Voir tous nos services
+          {copy.viewAll}
         </Link>
       </div>
     </section>

@@ -3,12 +3,13 @@ import { PhoneLink } from "@/src/presentation/contact/components/PhoneLink";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type TopInfoBarProps = {
+  readonly ariaLabel: string;
   readonly contacts: readonly ContactItem[];
 };
 
-export function TopInfoBar({ contacts }: TopInfoBarProps) {
+export function TopInfoBar({ ariaLabel, contacts }: TopInfoBarProps) {
   return (
-    <div className="topbar" aria-label="Informations pratiques">
+    <div className="topbar" aria-label={ariaLabel}>
       <div className="container topbar__inner">
         {contacts.map((contact) => {
           const content = (

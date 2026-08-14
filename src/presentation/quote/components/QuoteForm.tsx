@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import type { AppDictionary } from "@/src/domain/i18n/dictionaries";
 import type { SoumissionFormValues } from "@/src/domain/quote/soumission";
 import type { Service } from "@/src/domain/services/models";
 import type { ServiceSlug } from "@/src/domain/services/services";
@@ -10,7 +11,10 @@ import { SoumissionConfirmation } from "@/src/presentation/quote/components/Soum
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type QuoteFormProps = {
+  readonly confirmationCopy: AppDictionary["confirmation"];
+  readonly copy: AppDictionary["quoteForm"];
   readonly initialService?: ServiceSlug;
+  readonly labels: AppDictionary["common"];
   readonly services: readonly Service[];
 };
 
@@ -19,12 +23,6 @@ type QuoteFormErrors = Partial<Record<keyof SoumissionFormValues, string>>;
 type SubmitState = "idle" | "success" | "error";
 
 const PHONE_DIGIT_LIMIT = 10;
-
-const SUBJECT_OPTIONS = [
-  { value: "soumission", label: "Demande de soumission" },
-  { value: "information", label: "Demande d'information" },
-  { value: "visite", label: "Planifier une visite" },
-] as const;
 
 const emptyValues: SoumissionFormValues = {
   firstName: "",
@@ -38,37 +36,40 @@ const emptyValues: SoumissionFormValues = {
   context: "",
 };
 
-function validate(values: SoumissionFormValues): QuoteFormErrors {
+function validate(
+  values: SoumissionFormValues,
+  copy: AppDictionary["quoteForm"],
+): QuoteFormErrors {
   const errors: QuoteFormErrors = {};
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneDigits = getPhoneDigits(values.phone);
 
   if (!values.firstName.trim()) {
-    errors.firstName = "Le prénom est requis.";
+    errors.firstName = copy.errors.firstName;
   }
 
   if (!values.lastName.trim()) {
-    errors.lastName = "Le nom est requis.";
+    errors.lastName = copy.errors.lastName;
   }
 
   if (!values.email.trim()) {
-    errors.email = "Le courriel est requis.";
+    errors.email = copy.errors.emailRequired;
   } else if (!emailPattern.test(values.email.trim())) {
-    errors.email = "Entrez un courriel valide.";
+    errors.email = copy.errors.emailInvalid;
   }
 
   if (!values.phone.trim()) {
-    errors.phone = "Le téléphone est requis.";
+    errors.phone = copy.errors.phoneRequired;
   } else if (phoneDigits.length !== PHONE_DIGIT_LIMIT) {
-    errors.phone = "Entrez un numéro de téléphone à 10 chiffres.";
+    errors.phone = copy.errors.phoneInvalid;
   }
 
   if (!values.subject) {
-    errors.subject = "Le sujet est requis.";
+    errors.subject = copy.errors.subject;
   }
 
   if (!values.context.trim()) {
-    errors.context = "Le contexte est requis.";
+    errors.context = copy.errors.context;
   }
 
   return errors;
@@ -82,7 +83,13 @@ function normalizePhoneInput(value: string) {
   return getPhoneDigits(value).slice(0, PHONE_DIGIT_LIMIT);
 }
 
-export function QuoteForm({ initialService, services }: QuoteFormProps) {
+export function QuoteForm({
+  confirmationCopy,
+  copy,
+  initialService,
+  labels,
+  services,
+}: QuoteFormProps) {
   const formId = useId();
   const [values, setValues] = useState<SoumissionFormValues>({
     ...emptyValues,
@@ -119,7 +126,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
     setSubmitState("idle");
     setConfirmationError("");
     if (hasTriedSubmit) {
-      setErrors(validate(nextValues));
+      setErrors(validate(nextValues, copy));
     }
   }
 
@@ -130,7 +137,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
       return;
     }
 
-    const nextErrors = validate(values);
+    const nextErrors = validate(values, copy);
     setErrors(nextErrors);
     setHasTriedSubmit(true);
     setSubmitState("idle");
@@ -170,7 +177,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
       setPendingSubmission(null);
       setSubmitState("success");
     } catch {
-      setConfirmationError("Une erreur est survenue lors de l’envoi. Veuillez réessayer.");
+      setConfirmationError(copy.errors.send);
     } finally {
       setIsSubmitting(false);
     }
@@ -183,7 +190,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         <Field
           error={errors.firstName}
           id={`${formId}-first-name`}
-          label="First Name"
+          label={copy.fields.firstName}
           required
         >
           <input
@@ -199,7 +206,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         <Field
           error={errors.lastName}
           id={`${formId}-last-name`}
-          label="Last Name"
+          label={copy.fields.lastName}
           required
         >
           <input
@@ -214,7 +221,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         </Field>
       </div>
 
-      <Field error={errors.company} id={`${formId}-company`} label="Company">
+      <Field error={errors.company} id={`${formId}-company`} label={copy.fields.company}>
         <input
           id={`${formId}-company`}
           name="company"
@@ -226,7 +233,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         />
       </Field>
 
-      <Field error={errors.email} id={`${formId}-email`} label="Email" required>
+      <Field error={errors.email} id={`${formId}-email`} label={copy.fields.email} required>
         <input
           id={`${formId}-email`}
           name="email"
@@ -239,7 +246,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         />
       </Field>
 
-      <Field error={errors.phone} id={`${formId}-phone`} label="Phone Number" required>
+      <Field error={errors.phone} id={`${formId}-phone`} label={copy.fields.phone} required>
         <div className="quote-form__phone-control">
           <input
             id={`${formId}-phone`}
@@ -264,19 +271,19 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         </div>
       </Field>
 
-      <Field id={`${formId}-service`} label="Service">
+      <Field id={`${formId}-service`} label={copy.fields.service}>
         <FormListbox
           id={`${formId}-service`}
           name="service"
           options={serviceOptions}
-          placeholder="Sélectionner un service"
+          placeholder={copy.placeholders.service}
           value={values.service}
           onChange={(value) => updateValue("service", value)}
         />
       </Field>
 
       <fieldset className="quote-form__fieldset">
-        <legend>Will any work at heights be required?</legend>
+        <legend>{copy.fields.workAtHeights}</legend>
         <label>
           <input
             type="radio"
@@ -285,7 +292,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
             checked={values.workAtHeights === "yes"}
             onChange={() => updateValue("workAtHeights", "yes")}
           />
-          Yes
+          {labels.yes}
         </label>
         <label>
           <input
@@ -295,29 +302,29 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
             checked={values.workAtHeights === "no"}
             onChange={() => updateValue("workAtHeights", "no")}
           />
-          No
+          {labels.no}
         </label>
       </fieldset>
 
-      <Field error={errors.subject} id={`${formId}-subject`} label="Subject" required>
+      <Field error={errors.subject} id={`${formId}-subject`} label={copy.fields.subject} required>
         <FormListbox
           id={`${formId}-subject`}
           name="subject"
           ariaDescribedBy={errors.subject ? `${formId}-subject-error` : undefined}
           ariaInvalid={Boolean(errors.subject)}
-          options={SUBJECT_OPTIONS}
-          placeholder="Choisir"
+          options={copy.subjects}
+          placeholder={copy.placeholders.subject}
           value={values.subject}
           onChange={(value) => updateValue("subject", value)}
         />
       </Field>
 
-      <Field error={errors.context} id={`${formId}-context`} label="Context" required>
+      <Field error={errors.context} id={`${formId}-context`} label={copy.fields.context} required>
         <textarea
           id={`${formId}-context`}
           name="context"
           rows={4}
-          placeholder="Adresse du bâtiment, dimensions approximatives, contexte ou raison de la demande"
+          placeholder={copy.placeholders.context}
           value={values.context}
           aria-invalid={Boolean(errors.context)}
           aria-describedby={errors.context ? `${formId}-context-error` : undefined}
@@ -326,18 +333,18 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
       </Field>
 
       <button className="button button--primary quote-form__submit" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Envoi en cours..." : "Send my request"}
+        {isSubmitting ? copy.submitting : copy.submit}
       </button>
 
       {submitState === "success" ? (
-        <FeedbackAlert mode="toast" title="Demande envoyée" variant="success">
-          Votre demande a été envoyée avec succès. Nous vous contacterons prochainement.
+        <FeedbackAlert mode="toast" title={copy.successTitle} variant="success">
+          {copy.successBody}
         </FeedbackAlert>
       ) : null}
 
       {submitState === "error" ? (
-        <FeedbackAlert mode="toast" title="Envoi impossible" variant="error">
-          Une erreur est survenue lors de l’envoi de votre demande. Veuillez réessayer.
+        <FeedbackAlert mode="toast" title={copy.errorTitle} variant="error">
+          {copy.errorBody}
         </FeedbackAlert>
       ) : null}
 
@@ -348,8 +355,10 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
           data={pendingSubmission}
           error={confirmationError}
           isSubmitting={isSubmitting}
+          copy={confirmationCopy}
+          labels={labels}
           serviceOptions={serviceOptions}
-          subjectOptions={SUBJECT_OPTIONS}
+          subjectOptions={copy.subjects}
           onCancel={handleCancelSubmission}
           onConfirm={handleConfirmSubmission}
         />

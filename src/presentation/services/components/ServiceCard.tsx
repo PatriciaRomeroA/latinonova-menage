@@ -5,10 +5,11 @@ import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type ServiceCardProps = {
+  readonly discoverLabel: string;
   readonly service: Service;
 };
 
-export function ServiceCard({ service }: ServiceCardProps) {
+export function ServiceCard({ discoverLabel, service }: ServiceCardProps) {
   const image = imageCatalog[service.imageKey];
 
   return (
@@ -26,7 +27,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
           <h2>{service.title}</h2>
           <p>{service.subtitle}</p>
           <span className="services-page-card__link">
-            Découvrir le service
+            {discoverLabel}
             <span className="button__icon-slot" aria-hidden="true">
               <AppIcon className="button__icon" name="arrowRight" size={14} />
             </span>

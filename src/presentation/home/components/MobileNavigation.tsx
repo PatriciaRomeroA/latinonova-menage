@@ -4,14 +4,22 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { NavigationItem } from "@/src/domain/home/models";
+import { LanguageToggle } from "@/src/presentation/common/language/LanguageToggle";
 import { QuoteTrigger } from "@/src/presentation/quote/components/QuoteTrigger";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type MobileNavigationProps = {
+  readonly labels: {
+    readonly allServices: string;
+    readonly closeMenu?: string;
+    readonly mobileNavigation?: string;
+    readonly openMenu?: string;
+    readonly quoteCta: string;
+  };
   readonly navigation: readonly NavigationItem[];
 };
 
-export function MobileNavigation({ navigation }: MobileNavigationProps) {
+export function MobileNavigation({ labels, navigation }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -69,25 +77,25 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
               id="mobile-navigation"
               role="dialog"
               aria-modal="true"
-              aria-label="Navigation mobile"
+              aria-label={labels.mobileNavigation ?? "Navigation mobile"}
               onClick={(event) => event.stopPropagation()}
             >
               <button
                 className="menu-button menu-button--close"
                 type="button"
-                aria-label="Fermer le menu"
+                aria-label={labels.closeMenu ?? "Fermer le menu"}
                 onClick={closeMenu}
               >
                 <AppIcon
-                  ariaLabel="Fermer le menu"
+                  ariaLabel={labels.closeMenu ?? "Fermer le menu"}
                   decorative={false}
                   inline={false}
                   name="close"
                   size={20}
                 />
               </button>
-              <p>Navigation</p>
-              <nav aria-label="Navigation mobile principale">
+              <p>{labels.mobileNavigation ?? "Navigation"}</p>
+              <nav aria-label={labels.mobileNavigation ?? "Navigation mobile principale"}>
                 {navigation.map((item) => {
                   if (!item.children?.length) {
                     return (
@@ -120,7 +128,7 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
                       {isExpanded ? (
                         <div className="mobile-nav__submenu">
                           <Link href="/services" onClick={closeMenu}>
-                            Tous les services
+                            {labels.allServices}
                           </Link>
                           {item.children.map((child) => (
                             <a href={child.href} key={child.href} onClick={closeMenu}>
@@ -134,8 +142,9 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
                 })}
               </nav>
               <QuoteTrigger className="button button--primary" onClick={closeMenu}>
-                Soumission gratuite
+                {labels.quoteCta}
               </QuoteTrigger>
+              <LanguageToggle className="language-toggle--mobile" />
             </div>
           </div>,
           document.body,
@@ -148,13 +157,21 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
         ref={buttonRef}
         className={`menu-button${isOpen ? " is-open" : ""}`}
         type="button"
-        aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
+        aria-label={
+          isOpen
+            ? labels.closeMenu ?? "Fermer le menu"
+            : labels.openMenu ?? "Ouvrir le menu"
+        }
         aria-expanded={isOpen}
         aria-controls="mobile-navigation"
         onClick={() => setIsOpen((open) => !open)}
       >
         <AppIcon
-          ariaLabel={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          ariaLabel={
+            isOpen
+              ? labels.closeMenu ?? "Fermer le menu"
+              : labels.openMenu ?? "Ouvrir le menu"
+          }
           decorative={false}
           inline={false}
           name={isOpen ? "close" : "menu"}

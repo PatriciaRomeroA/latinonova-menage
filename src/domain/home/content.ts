@@ -4,58 +4,57 @@ import {
   getEmailHref,
   getPhoneTelHref,
 } from "@/src/domain/contact/contact-info";
-import { SERVICES } from "@/src/domain/services/services";
+import { getDictionary } from "@/src/domain/i18n/dictionaries";
+import { DEFAULT_LOCALE, type Locale } from "@/src/domain/i18n/locales";
+import { getServices } from "@/src/domain/services/services";
 
-const serviceLinks: readonly NavigationItem[] = SERVICES.map((service) => ({
-  label: service.title,
-  href: `/services/${service.slug}`,
-}));
+export function getHomeContent(locale: Locale = DEFAULT_LOCALE): HomePageContent {
+  const dictionary = getDictionary(locale);
+  const services = getServices(locale);
+  const serviceLinks: readonly NavigationItem[] = services.map((service) => ({
+    label: service.title,
+    href: `/services/${service.slug}`,
+  }));
 
-const navigationLinks: readonly NavigationItem[] = [
-  { label: "Accueil", href: "/#accueil" },
-  { label: "Services", href: "/services" },
-  { label: "À propos", href: "/a-propos" },
-  { label: "Soumission", href: "/soumission" },
-  { label: "Contact", href: "/#contact" },
-];
+  const navigationLinks: readonly NavigationItem[] = [
+    { label: dictionary.navigation.home, href: "/#accueil" },
+    { label: dictionary.navigation.services, href: "/services" },
+    { label: dictionary.navigation.about, href: "/a-propos" },
+    { label: dictionary.navigation.quote, href: "/soumission" },
+    { label: dictionary.navigation.contact, href: "/#contact" },
+  ];
 
-const headerNavigation: readonly NavigationItem[] = navigationLinks
-  .filter((item) => item.label !== "Soumission")
-  .map((item) =>
-    item.href === "/services" ? { ...item, children: serviceLinks } : item,
-  );
+  const headerNavigation: readonly NavigationItem[] = navigationLinks
+    .filter((item) => item.href !== "/soumission")
+    .map((item) =>
+      item.href === "/services" ? { ...item, children: serviceLinks } : item,
+    );
 
-export const homePageContent: HomePageContent = {
-  navigation: headerNavigation,
-  contacts: [
-    { label: "Montréal & Rive-Nord", icon: "location" },
-    { label: "Lundi - Vendredi : 7h00 - 18h00", icon: "clock" },
-    { label: contactInfo.phoneDisplay, href: getPhoneTelHref(), icon: "phone" },
-    {
-      label: contactInfo.email,
-      href: getEmailHref(),
-      icon: "email",
-    },
-  ],
-  trustBenefits: [
-    { label: "Service fiable et professionnel", icon: "shieldCheck" },
-    { label: "Réponse rapide 24h", icon: "replyFast" },
-    { label: "Satisfaction garantie", icon: "satisfaction" },
-  ],
-  aboutBenefits: [
-    { label: "Équipe professionnelle", icon: "team" },
-    { label: "Produits de qualité et écologiques", icon: "eco" },
-    { label: "Respect de vos espaces", icon: "respect" },
-    { label: "Flexibilité et adaptabilité", icon: "flexibility" },
-  ],
-  footerColumns: [
-    {
-      title: "Navigation",
-      links: navigationLinks,
-    },
-    {
-      title: "Services",
-      links: serviceLinks,
-    },
-  ],
-};
+  return {
+    navigation: headerNavigation,
+    contacts: [
+      { label: dictionary.topbar.area, icon: "location" },
+      { label: dictionary.topbar.schedule, icon: "clock" },
+      { label: contactInfo.phoneDisplay, href: getPhoneTelHref(), icon: "phone" },
+      {
+        label: contactInfo.email,
+        href: getEmailHref(),
+        icon: "email",
+      },
+    ],
+    trustBenefits: dictionary.benefits.trust,
+    aboutBenefits: dictionary.benefits.about,
+    footerColumns: [
+      {
+        title: dictionary.footer.navigationTitle,
+        links: navigationLinks,
+      },
+      {
+        title: dictionary.footer.servicesTitle,
+        links: serviceLinks,
+      },
+    ],
+  };
+}
+
+export const homePageContent = getHomeContent(DEFAULT_LOCALE);

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getDictionary } from "@/src/domain/i18n/dictionaries";
+import { getCurrentLocale } from "@/src/domain/i18n/server-locale";
 import {
   getServiceBySlug,
   getServiceSlugs,
@@ -19,10 +21,11 @@ export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const service = getServiceBySlug(slug);
+  const locale = await getCurrentLocale();
+  const service = getServiceBySlug(slug, locale);
 
   if (!service) {
-    return { title: "Service introuvable | Latinova Ménage inc." };
+    return { title: getDictionary(locale).metadata.serviceNotFoundTitle };
   }
 
   return {
@@ -33,7 +36,9 @@ export async function generateMetadata({
 
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
-  const service = getServiceBySlug(slug);
+  const locale = await getCurrentLocale();
+  const dictionary = getDictionary(locale);
+  const service = getServiceBySlug(slug, locale);
 
   if (!service) {
     notFound();
@@ -41,7 +46,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   return (
     <SiteChrome activeNavigationHref="/services">
-      <ServiceDetail service={service} />
+      <ServiceDetail eyebrow={dictionary.serviceDetail.eyebrow} service={service} />
     </SiteChrome>
   );
 }

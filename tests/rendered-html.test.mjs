@@ -130,6 +130,7 @@ test("centralizes the quote form and derives service options from SERVICES", asy
     quoteTypesSource,
     feedbackAlertSource,
     confirmationSource,
+    dictionarySource,
   ] = await Promise.all([
     readFile(
       new URL("../src/presentation/quote/components/QuoteForm.tsx", import.meta.url),
@@ -168,27 +169,31 @@ test("centralizes the quote form and derives service options from SERVICES", asy
       ),
       "utf8",
     ),
+    readFile(
+      new URL("../src/domain/i18n/dictionaries.ts", import.meta.url),
+      "utf8",
+    ),
   ]);
 
   assert.match(formSource, /services\.map/);
-  assert.match(formSource, /Sélectionner un service/);
+  assert.match(dictionarySource, /Sélectionner un service/);
   assert.match(formSource, /setPendingSubmission\(values\)/);
   assert.match(formSource, /sendSoumission\(pendingSubmission\)/);
   assert.match(formSource, /isSubmitting/);
   assert.match(formSource, /<SoumissionConfirmation/);
   assert.match(formSource, /<\/form>\s+\{pendingSubmission \?/);
   assert.match(formSource, /serviceOptions=\{serviceOptions\}/);
-  assert.match(formSource, /subjectOptions=\{SUBJECT_OPTIONS\}/);
-  assert.match(formSource, /<FeedbackAlert mode="toast" title="Demande envoyée" variant="success">/);
+  assert.match(formSource, /subjectOptions=\{copy\.subjects\}/);
+  assert.match(formSource, /<FeedbackAlert mode="toast" title=\{copy\.successTitle\} variant="success">/);
   assert.match(formSource, /setTimeout\(\(\) => setSubmitState\("idle"\), 4000\)/);
-  assert.match(confirmationSource, /Vérifiez votre demande/);
-  assert.match(confirmationSource, /Voici le preview des informations/);
-  assert.match(confirmationSource, /Cancelar/);
-  assert.match(confirmationSource, /Envoyer la demande/);
+  assert.match(dictionarySource, /Vérifiez votre demande/);
+  assert.match(dictionarySource, /Voici le preview des informations/);
+  assert.match(dictionarySource, /Cancelar/);
+  assert.match(dictionarySource, /Envoyer la demande/);
   assert.doesNotMatch(confirmationSource, />Modifier</);
   assert.match(confirmationSource, /role="dialog"/);
-  assert.match(confirmationSource, /getOptionLabel\(serviceOptions, data\.service\)/);
-  assert.match(confirmationSource, /getOptionLabel\(subjectOptions, data\.subject\)/);
+  assert.match(confirmationSource, /getOptionLabel\(serviceOptions, data\.service, fallback\)/);
+  assert.match(confirmationSource, /getOptionLabel\(subjectOptions, data\.subject, fallback\)/);
   assert.match(confirmationSource, /white-space: pre-wrap|data\.context/);
   assert.match(feedbackAlertSource, /variant === "error" \? "alert" : "status"/);
   assert.match(feedbackAlertSource, /variant === "error" \? "assertive" : "polite"/);
@@ -197,7 +202,7 @@ test("centralizes the quote form and derives service options from SERVICES", asy
   assert.match(formSource, /PHONE_DIGIT_LIMIT = 10/);
   assert.match(formSource, /normalizePhoneInput\(event\.target\.value\)/);
   assert.match(formSource, /phoneDigitCount\}\/\{PHONE_DIGIT_LIMIT\}/);
-  assert.match(formSource, /Entrez un numéro de téléphone à 10 chiffres\./);
+  assert.match(dictionarySource, /Entrez un numéro de téléphone à 10 chiffres\./);
   assert.doesNotMatch(formSource, /console\.log/);
   assert.doesNotMatch(formSource, /Requested sub-service/i);
   assert.doesNotMatch(formSource, /requestedSubService/i);
@@ -254,7 +259,7 @@ test("keeps service data and resolution centralized", async () => {
   );
   assert.equal(slugs.length, 5);
   assert.equal(new Set(slugs).size, slugs.length);
-  assert.match(resolverSource, /SERVICES\.find/);
+  assert.match(resolverSource, /getServices\(locale\)\.find/);
   assert.match(detailSource, /service\.items\.map/);
   assert.doesNotMatch(detailSource, /service\.slug\s*===|switch\s*\(/);
 });

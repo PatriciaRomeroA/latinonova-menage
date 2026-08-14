@@ -6,10 +6,11 @@ import { SplitContentSection } from "@/src/presentation/shared/components/SplitC
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type ServiceDetailProps = {
+  readonly eyebrow: string;
   readonly service: Service;
 };
 
-export function ServiceDetail({ service }: ServiceDetailProps) {
+export function ServiceDetail({ eyebrow, service }: ServiceDetailProps) {
   const image = imageCatalog[service.imageKey];
 
   return (
@@ -24,7 +25,7 @@ export function ServiceDetail({ service }: ServiceDetailProps) {
       }}
     >
       <div data-service-slug={service.slug}>
-        <p className="eyebrow">Nos services</p>
+        <p className="eyebrow">{eyebrow}</p>
         <h1 id="service-detail-title">{service.title}</h1>
         <p className="service-detail__subtitle">{service.subtitle}</p>
         <div className="service-detail__copy">

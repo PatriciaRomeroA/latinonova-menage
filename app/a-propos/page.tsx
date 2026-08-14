@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
+import { getDictionary } from "@/src/domain/i18n/dictionaries";
+import { getCurrentLocale } from "@/src/domain/i18n/server-locale";
 import { AboutPage } from "@/src/presentation/about/components/AboutPage";
 import { SiteChrome } from "@/src/presentation/shared/components/SiteChrome";
 
-export const metadata: Metadata = {
-  title: "À propos de nous | Latinova Ménage inc.",
-  description:
-    "Découvrez l'histoire, les principes et la mission de Latinova Ménage inc., une entreprise fondée sur la confiance, le travail et l'excellence.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getCurrentLocale();
+  const dictionary = getDictionary(locale);
 
-export default function AboutRoute() {
+  return {
+    title: dictionary.metadata.aboutTitle,
+    description: dictionary.metadata.aboutDescription,
+  };
+}
+
+export default async function AboutRoute() {
+  const locale = await getCurrentLocale();
+  const dictionary = getDictionary(locale);
+
   return (
     <SiteChrome activeNavigationHref="/a-propos">
-      <AboutPage />
+      <AboutPage copy={dictionary.aboutPage} />
     </SiteChrome>
   );
 }

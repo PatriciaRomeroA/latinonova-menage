@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Lato, Montserrat } from "next/font/google";
 import { headers } from "next/headers";
+import { getDictionary } from "@/src/domain/i18n/dictionaries";
+import { getCurrentLocale } from "@/src/domain/i18n/server-locale";
+import { LanguageProvider } from "@/src/presentation/common/language/LanguageProvider";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -16,6 +19,8 @@ const lato = Lato({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getCurrentLocale();
+  const dictionary = getDictionary(locale);
   const requestHeaders = await headers();
   const host =
     requestHeaders.get("x-forwarded-host") ??
@@ -25,9 +30,9 @@ export async function generateMetadata(): Promise<Metadata> {
     requestHeaders.get("x-forwarded-proto") ??
     (host.startsWith("localhost") ? "http" : "https");
   const baseUrl = `${protocol}://${host}`;
-  const title = "Latinova Ménage Inc. | Services de nettoyage à Montréal";
-  const description =
-    "Services de nettoyage commercial, institutionnel, après rénovation et résidentiel à Montréal et sur la Rive-Nord.";
+  const title = dictionary.metadata.rootTitle;
+  const description = dictionary.metadata.rootDescription;
+  const openGraphLocale = locale === "fr" ? "fr_CA" : locale === "es" ? "es_CA" : "en_CA";
 
   return {
     title,
@@ -40,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       type: "website",
-      locale: "fr_CA",
+      locale: openGraphLocale,
       images: [{ url: `${baseUrl}/og.png`, width: 1536, height: 910, alt: title }],
     },
     twitter: {
@@ -52,15 +57,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getCurrentLocale();
+
   return (
-    <html lang="fr">
+    <html lang={locale}>
       <body className={`${montserrat.variable} ${lato.variable}`}>
-        {children}
+        <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
       </body>
     </html>
   );

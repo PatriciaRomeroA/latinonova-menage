@@ -2,26 +2,31 @@ import type { Service } from "@/src/domain/services/models";
 import { ServiceCard } from "./ServiceCard";
 
 type ServicesDirectoryProps = {
+  readonly copy: {
+    readonly body: string;
+    readonly discoverService: string;
+    readonly eyebrow: string;
+    readonly title: string;
+  };
   readonly services: readonly Service[];
 };
 
-export function ServicesDirectory({ services }: ServicesDirectoryProps) {
+export function ServicesDirectory({ copy, services }: ServicesDirectoryProps) {
   return (
     <section className="services-directory section" aria-labelledby="services-page-title">
       <div className="container">
         <header className="services-directory__header">
-          <p className="eyebrow">Nos services</p>
-          <h1 id="services-page-title">
-            Des solutions de nettoyage adaptées à chaque espace
-          </h1>
-          <p>
-            Découvrez nos services professionnels et choisissez la solution qui
-            correspond à votre environnement, votre horaire et vos besoins.
-          </p>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1 id="services-page-title">{copy.title}</h1>
+          <p>{copy.body}</p>
         </header>
         <div className="services-directory__grid">
           {services.map((service) => (
-            <ServiceCard key={service.slug} service={service} />
+            <ServiceCard
+              discoverLabel={copy.discoverService}
+              key={service.slug}
+              service={service}
+            />
           ))}
         </div>
       </div>

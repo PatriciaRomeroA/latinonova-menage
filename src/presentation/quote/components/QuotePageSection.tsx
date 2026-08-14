@@ -1,32 +1,45 @@
-import { SERVICES, type ServiceSlug } from "@/src/domain/services/services";
+import type { AppDictionary } from "@/src/domain/i18n/dictionaries";
+import type { Service } from "@/src/domain/services/models";
+import type { ServiceSlug } from "@/src/domain/services/services";
 import { QuoteForm } from "./QuoteForm";
 
 type QuotePageSectionProps = {
+  readonly copy: AppDictionary["quotePage"];
+  readonly formCopy: AppDictionary["quoteForm"];
+  readonly confirmationCopy: AppDictionary["confirmation"];
   readonly initialService?: ServiceSlug;
+  readonly labels: AppDictionary["common"];
+  readonly services: readonly Service[];
 };
 
-export function QuotePageSection({ initialService }: QuotePageSectionProps) {
+export function QuotePageSection({
+  confirmationCopy,
+  copy,
+  formCopy,
+  initialService,
+  labels,
+  services,
+}: QuotePageSectionProps) {
   return (
     <section className="quote-page" aria-labelledby="quote-page-title">
       <div className="container quote-page__layout">
         <div className="quote-page__copy">
-          <p className="eyebrow">Soumission gratuite</p>
-          <h1 id="quote-page-title">
-            Une propreté professionnelle, adaptée à vos besoins
-          </h1>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1 id="quote-page-title">{copy.title}</h1>
+          <p>{copy.intro}</p>
           <p>
-            Vous cherchez un service d&apos;entretien fiable pour votre entreprise,
-            votre institution ou votre propriété?
-          </p>
-          <p>
-            Remplissez le formulaire et notre équipe vous contactera afin de
-            mieux comprendre vos besoins et de vous proposer une{" "}
-            <strong>soumission personnalisée, sans engagement</strong>.
+            {copy.bodyPrefix} <strong>{copy.bodyStrong}</strong>.
           </p>
         </div>
 
         <div className="quote-page__form-card">
-          <QuoteForm initialService={initialService} services={SERVICES} />
+          <QuoteForm
+            confirmationCopy={confirmationCopy}
+            copy={formCopy}
+            initialService={initialService}
+            labels={labels}
+            services={services}
+          />
         </div>
       </div>
     </section>

@@ -4,14 +4,39 @@ import { AppIcon } from "@/src/shared/icons/AppIcon";
 import { Brand } from "./Brand";
 
 type SiteFooterProps = {
+  readonly brandText: string;
   readonly columns: readonly FooterColumn[];
   readonly contacts: readonly ContactItem[];
+  readonly labels: {
+    readonly accordion: string;
+    readonly configuredLater: string;
+    readonly contactTitle: string;
+    readonly copyright: string;
+    readonly legal: string;
+    readonly location: string;
+    readonly privacy: string;
+    readonly social: string;
+    readonly terms: string;
+  };
   readonly overlapsBanner?: boolean;
 };
 
+function renderMultilineText(value: string) {
+  const lines = value.split("\n");
+
+  return lines.map((line, index) => (
+    <span key={`${line}-${index}`}>
+      {index > 0 ? <br /> : null}
+      {line}
+    </span>
+  ));
+}
+
 export function SiteFooter({
+  brandText,
   columns,
   contacts,
+  labels,
   overlapsBanner = false,
 }: SiteFooterProps) {
   return (
@@ -24,11 +49,8 @@ export function SiteFooter({
           <div className="footer__grid">
             <div className="footer__brand">
               <Brand compact />
-              <p>
-                Services de nettoyage commercial, institutionnel, après rénovation
-                et résidentiel à Montréal et sur la Rive-Nord.
-              </p>
-              <div className="socials" aria-label="Réseaux sociaux">
+              <p>{brandText}</p>
+              <div className="socials" aria-label={labels.social}>
                 {[
                   ["facebook", "Facebook"],
                   ["instagram", "Instagram"],
@@ -37,12 +59,12 @@ export function SiteFooter({
                   <span
                     className="socials__item"
                     key={label}
-                    aria-label={`${label} — lien à configurer`}
-                    title="Lien à configurer"
+                    aria-label={`${label} — ${labels.configuredLater}`}
+                    title={labels.configuredLater}
                   >
                     <span className="socials__icon-slot">
                       <AppIcon
-                        ariaLabel={`${label} — lien à configurer`}
+                        ariaLabel={`${label} — ${labels.configuredLater}`}
                         className="socials__icon"
                         decorative={false}
                         name={name as "facebook" | "instagram" | "email"}
@@ -53,7 +75,7 @@ export function SiteFooter({
                 ))}
               </div>
             </div>
-            <div className="footer__mobile-accordion" aria-label="Navigation du pied de page">
+            <div className="footer__mobile-accordion" aria-label={labels.accordion}>
               {columns.map((column) => (
                 <details className="footer__accordion-item" key={`mobile-${column.title}`}>
                   <summary>
@@ -69,7 +91,7 @@ export function SiteFooter({
               ))}
               <details className="footer__accordion-item">
                 <summary>
-                  Contact
+                  {labels.contactTitle}
                   <AppIcon className="footer__accordion-icon" name="chevronDown" size={14} />
                 </summary>
                 <div className="footer__accordion-body footer__accordion-body--contact">
@@ -91,7 +113,7 @@ export function SiteFooter({
                       </a>
                     );
                   })}
-                  <p><span className="footer__contact-icon-slot" aria-hidden="true"><AppIcon className="footer__contact-icon" name="location" size={14} /></span>Montréal, Québec<br />Rive-Nord et environs</p>
+                  <p><span className="footer__contact-icon-slot" aria-hidden="true"><AppIcon className="footer__contact-icon" name="location" size={14} /></span>{renderMultilineText(labels.location)}</p>
                 </div>
               </details>
             </div>
@@ -104,7 +126,7 @@ export function SiteFooter({
               </nav>
             ))}
             <div className="footer__column footer__contact footer__column--desktop">
-              <h2>Contact</h2>
+              <h2>{labels.contactTitle}</h2>
               {contacts.slice(2).map((contact) => {
                 const content = (
                   <>
@@ -123,16 +145,16 @@ export function SiteFooter({
                   </a>
                 );
               })}
-              <p><span className="footer__contact-icon-slot" aria-hidden="true"><AppIcon className="footer__contact-icon" name="location" size={14} /></span>Montréal, Québec<br />Rive-Nord et environs</p>
+              <p><span className="footer__contact-icon-slot" aria-hidden="true"><AppIcon className="footer__contact-icon" name="location" size={14} /></span>{renderMultilineText(labels.location)}</p>
             </div>
           </div>
           <div className="footer__bottom">
             <p className="footer__copyright">
-              © {new Date().getFullYear()} Latinova Ménage inc. Tous droits réservés.
+              © {new Date().getFullYear()} Latinova Ménage inc. {labels.copyright}
             </p>
-            <div aria-label="Informations légales">
-              <span>Politique de confidentialité</span>
-              <span>Conditions d’utilisation</span>
+            <div aria-label={labels.legal}>
+              <span>{labels.privacy}</span>
+              <span>{labels.terms}</span>
             </div>
           </div>
         </div>

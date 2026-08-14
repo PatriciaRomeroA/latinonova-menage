@@ -1442,7 +1442,7 @@ button:focus-visible {
   inset: 0;
   display: grid;
   place-items: center;
-  padding: clamp(16px, 3vw, 32px);
+  padding: clamp(10px, 2vw, 22px);
 }
 
 .soumission-review__overlay {
@@ -1457,12 +1457,14 @@ button:focus-visible {
 
 .soumission-review__panel {
   position: relative;
-  width: min(100%, 820px);
-  max-height: min(86vh, 840px);
+  width: min(100%, 720px);
+  height: auto;
+  max-height: calc(100svh - 24px);
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.76);
-  border-radius: 24px;
+  border-radius: 20px;
   background:
     linear-gradient(130deg, rgba(255, 255, 255, 0.92), rgba(246, 250, 255, 0.86)),
     rgba(255, 255, 255, 0.9);
@@ -1477,17 +1479,17 @@ button:focus-visible {
 .soumission-review__header {
   display: grid;
   justify-items: center;
-  gap: 14px;
-  padding: clamp(24px, 4vw, 34px) clamp(22px, 4vw, 38px) 20px;
+  gap: 6px;
+  padding: clamp(14px, 2vw, 20px) clamp(16px, 2.5vw, 28px) 14px;
   border-bottom: 1px solid rgba(124, 156, 193, 0.2);
   text-align: center;
 }
 
 .soumission-review__header h2 {
-  margin: 8px 0 10px;
+  margin: 4px 0 6px;
   color: var(--navy-950);
   font-family: var(--font-heading);
-  font-size: clamp(30px, 4.5vw, 44px);
+  font-size: clamp(24px, 3.2vw, 34px);
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.045em;
@@ -1497,29 +1499,31 @@ button:focus-visible {
   max-width: 560px;
   margin: 0;
   color: #52657c;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .soumission-review__body {
   display: grid;
-  gap: 18px;
+  min-height: 0;
+  gap: 10px;
   overflow-y: auto;
-  padding: 22px clamp(22px, 4vw, 38px);
+  padding: 14px clamp(16px, 2.5vw, 28px);
+  overscroll-behavior: contain;
 }
 
 .soumission-review__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
   margin: 0;
 }
 
 .soumission-review__item {
   min-width: 0;
-  padding: 16px 18px;
+  padding: 10px 12px;
   border: 1px solid rgba(124, 156, 193, 0.2);
-  border-radius: 16px;
+  border-radius: 13px;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(246, 250, 255, 0.72)),
     rgba(255, 255, 255, 0.76);
@@ -1531,11 +1535,11 @@ button:focus-visible {
 }
 
 .soumission-review__item dt {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   color: var(--blue-700);
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -1544,17 +1548,17 @@ button:focus-visible {
   margin: 0;
   overflow-wrap: anywhere;
   color: var(--navy-950);
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 650;
-  line-height: 1.45;
+  line-height: 1.35;
   white-space: pre-wrap;
 }
 
 .soumission-review__actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 20px clamp(22px, 4vw, 38px) clamp(22px, 4vw, 30px);
+  gap: 10px;
+  padding: 12px clamp(16px, 2.5vw, 28px) clamp(14px, 2.5vw, 20px);
   border-top: 1px solid rgba(124, 156, 193, 0.2);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.54), rgba(246, 250, 255, 0.72)),
@@ -1562,9 +1566,11 @@ button:focus-visible {
 }
 
 .soumission-review__actions .button {
-  min-height: 50px;
-  min-width: 190px;
+  min-height: 42px;
+  min-width: 160px;
   justify-content: center;
+  padding-inline: 20px;
+  font-size: 14px;
 }
 
 @keyframes feedback-toast-enter {
@@ -2639,31 +2645,57 @@ button:focus-visible {
 
   .soumission-review {
     align-items: end;
-    padding: 12px;
+    padding: 8px;
   }
 
   .soumission-review__panel {
     width: 100%;
-    max-height: 88vh;
-    border-radius: 22px;
+    max-height: calc(100svh - 16px);
+    border-radius: 18px;
   }
 
   .soumission-review__header {
-    padding: 22px 18px 18px;
+    padding: 14px 14px 12px;
+  }
+
+  .soumission-review__header h2 {
+    font-size: clamp(22px, 8vw, 30px);
+  }
+
+  .soumission-review__header p:last-child {
+    font-size: 12px;
   }
 
   .soumission-review__body {
-    padding: 18px;
+    padding: 12px;
   }
 
   .soumission-review__grid {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .soumission-review__item {
+    padding: 9px 10px;
+    border-radius: 12px;
+  }
+
+  .soumission-review__item dd {
+    font-size: 12px;
   }
 
   .soumission-review__actions {
     display: grid;
     grid-template-columns: 1fr;
-    padding: 18px;
+    gap: 8px;
+    padding: 10px 12px 12px;
+  }
+
+  .soumission-review__actions .button {
+    min-height: 40px;
+    min-width: 0;
+    width: 100%;
+    font-size: 13px;
   }
 
   .quote-form__submit {

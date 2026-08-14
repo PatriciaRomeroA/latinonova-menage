@@ -5,6 +5,8 @@ import type { SoumissionFormValues } from "@/src/domain/quote/soumission";
 import type { Service } from "@/src/domain/services/models";
 import type { ServiceSlug } from "@/src/domain/services/services";
 import { sendSoumission } from "@/src/infrastructure/email/send-soumission";
+import { FeedbackAlert } from "@/src/presentation/shared/components/FeedbackAlert";
+import { SoumissionConfirmation } from "@/src/presentation/quote/components/SoumissionConfirmation";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type QuoteFormProps = {
@@ -15,6 +17,8 @@ type QuoteFormProps = {
 type QuoteFormErrors = Partial<Record<keyof SoumissionFormValues, string>>;
 
 type SubmitState = "idle" | "success" | "error";
+
+const PHONE_DIGIT_LIMIT = 10;
 
 const SUBJECT_OPTIONS = [
   { value: "soumission", label: "Demande de soumission" },
@@ -37,7 +41,7 @@ const emptyValues: SoumissionFormValues = {
 function validate(values: SoumissionFormValues): QuoteFormErrors {
   const errors: QuoteFormErrors = {};
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phonePattern = /^[+\d().\-\s]{7,}$/;
+  const phoneDigits = getPhoneDigits(values.phone);
 
   if (!values.firstName.trim()) {
     errors.firstName = "Le prénom est requis.";
@@ -55,8 +59,8 @@ function validate(values: SoumissionFormValues): QuoteFormErrors {
 
   if (!values.phone.trim()) {
     errors.phone = "Le téléphone est requis.";
-  } else if (!phonePattern.test(values.phone.trim())) {
-    errors.phone = "Entrez un numéro de téléphone valide.";
+  } else if (phoneDigits.length !== PHONE_DIGIT_LIMIT) {
+    errors.phone = "Entrez un numéro de téléphone à 10 chiffres.";
   }
 
   if (!values.subject) {
@@ -70,6 +74,14 @@ function validate(values: SoumissionFormValues): QuoteFormErrors {
   return errors;
 }
 
+function getPhoneDigits(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function normalizePhoneInput(value: string) {
+  return getPhoneDigits(value).slice(0, PHONE_DIGIT_LIMIT);
+}
+
 export function QuoteForm({ initialService, services }: QuoteFormProps) {
   const formId = useId();
   const [values, setValues] = useState<SoumissionFormValues>({
@@ -79,12 +91,24 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
   const [errors, setErrors] = useState<QuoteFormErrors>({});
   const [hasTriedSubmit, setHasTriedSubmit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingSubmission, setPendingSubmission] = useState<SoumissionFormValues | null>(null);
+  const [confirmationError, setConfirmationError] = useState("");
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
 
   const serviceOptions = useMemo(
     () => services.map((service) => ({ value: service.slug, label: service.title })),
     [services],
   );
+  const phoneDigitCount = getPhoneDigits(values.phone).length;
+
+  useEffect(() => {
+    if (submitState === "idle") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => setSubmitState("idle"), 4000);
+    return () => window.clearTimeout(timeoutId);
+  }, [submitState]);
 
   function updateValue<K extends keyof SoumissionFormValues>(
     key: K,
@@ -93,6 +117,7 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
     const nextValues = { ...values, [key]: value };
     setValues(nextValues);
     setSubmitState("idle");
+    setConfirmationError("");
     if (hasTriedSubmit) {
       setErrors(validate(nextValues));
     }
@@ -114,25 +139,46 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
       return;
     }
 
+    setPendingSubmission(values);
+    setConfirmationError("");
+  }
+
+  function handleCancelSubmission() {
+    if (isSubmitting) {
+      return;
+    }
+
+    setPendingSubmission(null);
+    setConfirmationError("");
+  }
+
+  async function handleConfirmSubmission() {
+    if (isSubmitting || !pendingSubmission) {
+      return;
+    }
+
     setIsSubmitting(true);
+    setConfirmationError("");
     try {
-      await sendSoumission(values);
+      await sendSoumission(pendingSubmission);
       setValues({
         ...emptyValues,
         service: initialService ?? "",
       });
       setErrors({});
       setHasTriedSubmit(false);
+      setPendingSubmission(null);
       setSubmitState("success");
     } catch {
-      setSubmitState("error");
+      setConfirmationError("Une erreur est survenue lors de l’envoi. Veuillez réessayer.");
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <form className="quote-form" onSubmit={handleSubmit} noValidate>
+    <>
+      <form className="quote-form" onSubmit={handleSubmit} noValidate>
       <div className="quote-form__grid quote-form__grid--two">
         <Field
           error={errors.firstName}
@@ -194,16 +240,28 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
       </Field>
 
       <Field error={errors.phone} id={`${formId}-phone`} label="Phone Number" required>
-        <input
-          id={`${formId}-phone`}
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          value={values.phone}
-          aria-invalid={Boolean(errors.phone)}
-          aria-describedby={errors.phone ? `${formId}-phone-error` : undefined}
-          onChange={(event) => updateValue("phone", event.target.value)}
-        />
+        <div className="quote-form__phone-control">
+          <input
+            id={`${formId}-phone`}
+            name="phone"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="tel"
+            maxLength={PHONE_DIGIT_LIMIT}
+            value={values.phone}
+            aria-invalid={Boolean(errors.phone)}
+            aria-describedby={`${formId}-phone-counter${errors.phone ? ` ${formId}-phone-error` : ""}`}
+            onChange={(event) => updateValue("phone", normalizePhoneInput(event.target.value))}
+          />
+          <span
+            className="quote-form__phone-counter"
+            id={`${formId}-phone-counter`}
+            aria-live="polite"
+          >
+            {phoneDigitCount}/{PHONE_DIGIT_LIMIT}
+          </span>
+        </div>
       </Field>
 
       <Field id={`${formId}-service`} label="Service">
@@ -267,22 +325,36 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         />
       </Field>
 
-      {submitState === "success" ? (
-        <p className="quote-form__status" role="status">
-          Votre demande a été envoyée avec succès. Nous vous contacterons prochainement.
-        </p>
-      ) : null}
-
-      {submitState === "error" ? (
-        <p className="quote-form__status quote-form__status--error" role="alert">
-          Une erreur est survenue lors de l’envoi de votre demande. Veuillez réessayer.
-        </p>
-      ) : null}
-
       <button className="button button--primary quote-form__submit" type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Envoi en cours..." : "Send my request"}
       </button>
-    </form>
+
+      {submitState === "success" ? (
+        <FeedbackAlert mode="toast" title="Demande envoyée" variant="success">
+          Votre demande a été envoyée avec succès. Nous vous contacterons prochainement.
+        </FeedbackAlert>
+      ) : null}
+
+      {submitState === "error" ? (
+        <FeedbackAlert mode="toast" title="Envoi impossible" variant="error">
+          Une erreur est survenue lors de l’envoi de votre demande. Veuillez réessayer.
+        </FeedbackAlert>
+      ) : null}
+
+      </form>
+
+      {pendingSubmission ? (
+        <SoumissionConfirmation
+          data={pendingSubmission}
+          error={confirmationError}
+          isSubmitting={isSubmitting}
+          serviceOptions={serviceOptions}
+          subjectOptions={SUBJECT_OPTIONS}
+          onCancel={handleCancelSubmission}
+          onConfirm={handleConfirmSubmission}
+        />
+      ) : null}
+    </>
   );
 }
 

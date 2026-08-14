@@ -122,7 +122,15 @@ test("renders the soumission page with the reusable quote form", async () => {
 });
 
 test("centralizes the quote form and derives service options from SERVICES", async () => {
-  const [formSource, serviceDetailSource, emailServiceSource, emailConfigSource, quoteTypesSource] = await Promise.all([
+  const [
+    formSource,
+    serviceDetailSource,
+    emailServiceSource,
+    emailConfigSource,
+    quoteTypesSource,
+    feedbackAlertSource,
+    confirmationSource,
+  ] = await Promise.all([
     readFile(
       new URL("../src/presentation/quote/components/QuoteForm.tsx", import.meta.url),
       "utf8",
@@ -146,14 +154,50 @@ test("centralizes the quote form and derives service options from SERVICES", asy
       new URL("../src/domain/quote/soumission.ts", import.meta.url),
       "utf8",
     ),
+    readFile(
+      new URL(
+        "../src/presentation/shared/components/FeedbackAlert.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../src/presentation/quote/components/SoumissionConfirmation.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
   ]);
 
   assert.match(formSource, /services\.map/);
   assert.match(formSource, /Sélectionner un service/);
-  assert.match(formSource, /sendSoumission\(values\)/);
+  assert.match(formSource, /setPendingSubmission\(values\)/);
+  assert.match(formSource, /sendSoumission\(pendingSubmission\)/);
   assert.match(formSource, /isSubmitting/);
-  assert.match(formSource, /role="status"/);
-  assert.match(formSource, /role="alert"/);
+  assert.match(formSource, /<SoumissionConfirmation/);
+  assert.match(formSource, /<\/form>\s+\{pendingSubmission \?/);
+  assert.match(formSource, /serviceOptions=\{serviceOptions\}/);
+  assert.match(formSource, /subjectOptions=\{SUBJECT_OPTIONS\}/);
+  assert.match(formSource, /<FeedbackAlert mode="toast" title="Demande envoyée" variant="success">/);
+  assert.match(formSource, /setTimeout\(\(\) => setSubmitState\("idle"\), 4000\)/);
+  assert.match(confirmationSource, /Vérifiez votre demande/);
+  assert.match(confirmationSource, /Voici le preview des informations/);
+  assert.match(confirmationSource, /Cancelar/);
+  assert.match(confirmationSource, /Envoyer la demande/);
+  assert.doesNotMatch(confirmationSource, />Modifier</);
+  assert.match(confirmationSource, /role="dialog"/);
+  assert.match(confirmationSource, /getOptionLabel\(serviceOptions, data\.service\)/);
+  assert.match(confirmationSource, /getOptionLabel\(subjectOptions, data\.subject\)/);
+  assert.match(confirmationSource, /white-space: pre-wrap|data\.context/);
+  assert.match(feedbackAlertSource, /variant === "error" \? "alert" : "status"/);
+  assert.match(feedbackAlertSource, /variant === "error" \? "assertive" : "polite"/);
+  assert.match(feedbackAlertSource, /role=\{role\}/);
+  assert.match(feedbackAlertSource, /success: "check"/);
+  assert.match(formSource, /PHONE_DIGIT_LIMIT = 10/);
+  assert.match(formSource, /normalizePhoneInput\(event\.target\.value\)/);
+  assert.match(formSource, /phoneDigitCount\}\/\{PHONE_DIGIT_LIMIT\}/);
+  assert.match(formSource, /Entrez un numéro de téléphone à 10 chiffres\./);
   assert.doesNotMatch(formSource, /console\.log/);
   assert.doesNotMatch(formSource, /Requested sub-service/i);
   assert.doesNotMatch(formSource, /requestedSubService/i);

@@ -1,4 +1,5 @@
 import type { ContactItem, FooterColumn } from "@/src/domain/home/models";
+import { PhoneLink } from "@/src/presentation/contact/components/PhoneLink";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 import { Brand } from "./Brand";
 
@@ -72,14 +73,24 @@ export function SiteFooter({
                   <AppIcon className="footer__accordion-icon" name="chevronDown" size={14} />
                 </summary>
                 <div className="footer__accordion-body footer__accordion-body--contact">
-                  {contacts.slice(2).map((contact) => (
-                    <a href={contact.href} key={contact.label}>
-                      <span className="footer__contact-icon-slot" aria-hidden="true">
-                        <AppIcon className="footer__contact-icon" name={contact.icon} size={14} />
-                      </span>
-                      {contact.label}
-                    </a>
-                  ))}
+                  {contacts.slice(2).map((contact) => {
+                    const content = (
+                      <>
+                        <span className="footer__contact-icon-slot" aria-hidden="true">
+                          <AppIcon className="footer__contact-icon" name={contact.icon} size={14} />
+                        </span>
+                        {contact.label}
+                      </>
+                    );
+
+                    return contact.icon === "phone" ? (
+                      <PhoneLink key={contact.label}>{content}</PhoneLink>
+                    ) : (
+                      <a href={contact.href} key={contact.label}>
+                        {content}
+                      </a>
+                    );
+                  })}
                   <p><span className="footer__contact-icon-slot" aria-hidden="true"><AppIcon className="footer__contact-icon" name="location" size={14} /></span>Montréal, Québec<br />Rive-Nord et environs</p>
                 </div>
               </details>
@@ -94,14 +105,24 @@ export function SiteFooter({
             ))}
             <div className="footer__column footer__contact footer__column--desktop">
               <h2>Contact</h2>
-              {contacts.slice(2).map((contact) => (
-                <a href={contact.href} key={contact.label}>
-                  <span className="footer__contact-icon-slot" aria-hidden="true">
-                    <AppIcon className="footer__contact-icon" name={contact.icon} size={14} />
-                  </span>
-                  {contact.label}
-                </a>
-              ))}
+              {contacts.slice(2).map((contact) => {
+                const content = (
+                  <>
+                    <span className="footer__contact-icon-slot" aria-hidden="true">
+                      <AppIcon className="footer__contact-icon" name={contact.icon} size={14} />
+                    </span>
+                    {contact.label}
+                  </>
+                );
+
+                return contact.icon === "phone" ? (
+                  <PhoneLink key={contact.label}>{content}</PhoneLink>
+                ) : (
+                  <a href={contact.href} key={contact.label}>
+                    {content}
+                  </a>
+                );
+              })}
               <p><span className="footer__contact-icon-slot" aria-hidden="true"><AppIcon className="footer__contact-icon" name="location" size={14} /></span>Montréal, Québec<br />Rive-Nord et environs</p>
             </div>
           </div>

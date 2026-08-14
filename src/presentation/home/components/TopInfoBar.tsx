@@ -1,4 +1,5 @@
 import type { ContactItem } from "@/src/domain/home/models";
+import { PhoneLink } from "@/src/presentation/contact/components/PhoneLink";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type TopInfoBarProps = {
@@ -19,8 +20,16 @@ export function TopInfoBar({ contacts }: TopInfoBarProps) {
             </>
           );
 
+          if (contact.icon === "phone") {
+            return (
+              <PhoneLink key={contact.label}>
+                {content}
+              </PhoneLink>
+            );
+          }
+
           return contact.href ? (
-            <a key={contact.label} href={contact.href}>
+            <a href={contact.href} key={contact.label}>
               {content}
             </a>
           ) : (

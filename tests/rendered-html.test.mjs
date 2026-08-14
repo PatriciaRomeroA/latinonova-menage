@@ -36,7 +36,8 @@ test("server-renders the complete Latinova landing page", async () => {
   assert.match(html, /Demandez votre soumission gratuite/);
   assert.match(html, /href="\/soumission"/);
   assert.match(html, /Deux jeunes entrepreneurs\./);
-  assert.match(html, /href="tel:\+15141234567"/);
+  assert.match(html, /\(438\) 354-5653/);
+  assert.match(html, /href="tel:\+14383545653"/);
   assert.match(html, /href="mailto:info@latinovamenage\.com"/);
 });
 
@@ -213,4 +214,42 @@ test("centralizes icon rendering through the shared AppIcon layer", async () => 
   assert.match(appIcon, /data-icon=\{name\}/);
   assert.match(registry, /pickIcon\(lucideIcons, "map-pinned"\)/);
   assert.doesNotMatch(homeContent, /[⌖◷☎✉✓★▦◆✦⌂◎♧◇]/);
+});
+
+test("centralizes phone contact behavior for mobile dialer and desktop WhatsApp", async () => {
+  const [contactInfo, phoneLink, mobileDetector, homeContent] = await Promise.all([
+    readFile(
+      new URL("../src/domain/contact/contact-info.ts", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../src/presentation/contact/components/PhoneLink.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL("../src/shared/device/is-mobile-browser.ts", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../src/domain/home/content.ts", import.meta.url),
+      "utf8",
+    ),
+  ]);
+
+  assert.ok(contactInfo.includes('phoneDisplay: "(438) 354-5653"'));
+  assert.ok(contactInfo.includes('phoneE164: "+14383545653"'));
+  assert.ok(contactInfo.includes('phoneWhatsApp: "14383545653"'));
+  assert.ok(
+    contactInfo.includes(
+      "Bonjour! Je souhaite obtenir une soumission pour vos services de nettoyage. Pourriez-vous m’aider avec ma demande?",
+    ),
+  );
+  assert.match(contactInfo, /encodeURIComponent\(contactInfo\.whatsappMessage\)/);
+  assert.match(phoneLink, /window\.open\(getPhoneWhatsAppHref\(\), "_blank", "noopener,noreferrer"\)/);
+  assert.match(phoneLink, /href=\{getPhoneTelHref\(\)\}/);
+  assert.match(mobileDetector, /userAgentData\?\.mobile/);
+  assert.match(homeContent, /contactInfo\.phoneDisplay/);
 });

@@ -1,4 +1,9 @@
 import type { HomePageContent, NavigationItem } from "./models";
+import {
+  contactInfo,
+  getEmailHref,
+  getPhoneTelHref,
+} from "@/src/domain/contact/contact-info";
 import { SERVICES } from "@/src/domain/services/services";
 
 const serviceLinks: readonly NavigationItem[] = SERVICES.map((service) => ({
@@ -25,10 +30,10 @@ export const homePageContent: HomePageContent = {
   contacts: [
     { label: "Montréal & Rive-Nord", icon: "location" },
     { label: "Lundi - Vendredi : 7h00 - 18h00", icon: "clock" },
-    { label: "514 123-4567", href: "tel:+15141234567", icon: "phone" },
+    { label: contactInfo.phoneDisplay, href: getPhoneTelHref(), icon: "phone" },
     {
-      label: "info@latinovamenage.com",
-      href: "mailto:info@latinovamenage.com",
+      label: contactInfo.email,
+      href: getEmailHref(),
       icon: "email",
     },
   ],

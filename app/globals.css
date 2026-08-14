@@ -897,6 +897,274 @@ button:focus-visible {
   margin-top: 26px;
 }
 
+.about-page {
+  overflow: hidden;
+  background: var(--white);
+}
+
+.about-hero {
+  position: relative;
+  padding: clamp(58px, 7vw, 96px) 0 clamp(44px, 6vw, 78px);
+  background:
+    radial-gradient(circle at -8% -18%, rgba(234, 243, 255, 0.96) 0 34%, transparent 35%),
+    linear-gradient(112deg, var(--white) 0%, var(--white) 54%, var(--blue-100) 54%, var(--blue-100) 100%);
+}
+
+.about-hero::after {
+  position: absolute;
+  right: 9%;
+  bottom: -80px;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: rgba(11, 104, 209, 0.08);
+  content: "";
+  pointer-events: none;
+}
+
+.about-hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.86fr);
+  align-items: center;
+  gap: clamp(42px, 6vw, 84px);
+}
+
+.about-hero__content {
+  max-width: 720px;
+}
+
+.about-hero__content .eyebrow {
+  margin: 0 0 18px;
+}
+
+.about-hero h1 {
+  margin: 0;
+  color: var(--navy-950);
+  font-size: clamp(44px, 5vw, 74px);
+  letter-spacing: -0.055em;
+  line-height: 1.04;
+}
+
+.about-hero__visual {
+  position: relative;
+  min-height: 485px;
+  overflow: hidden;
+  border-radius: 34px;
+  box-shadow: 0 24px 58px rgba(3, 21, 47, 0.14);
+}
+
+.about-hero__visual::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(3, 21, 47, 0.12), rgba(3, 21, 47, 0.38));
+  content: "";
+}
+
+.about-hero__visual img {
+  object-fit: cover;
+  object-position: center 42%;
+  filter: saturate(0.78) contrast(1.08);
+}
+
+.about-story {
+  background: var(--white);
+}
+
+.about-story__grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.74fr) minmax(0, 1.16fr);
+  align-items: start;
+  gap: clamp(36px, 6vw, 92px);
+}
+
+.about-story .eyebrow {
+  margin: 0 0 16px;
+}
+
+.about-story h2 {
+  max-width: 420px;
+  margin: 0;
+  color: var(--navy-950);
+  font-size: clamp(28px, 3vw, 42px);
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+
+.about-story__lead {
+  max-width: 760px;
+  margin: 0;
+  color: #314359;
+  font-size: clamp(19px, 2vw, 27px);
+  line-height: 1.45;
+}
+
+.about-principles {
+  padding: 18px 0 86px;
+  background: var(--white);
+}
+
+.about-principles__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.about-principles__item {
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 32px 36px;
+  border-right: 1px solid var(--line);
+}
+
+.about-principles__item:last-child {
+  border-right: 0;
+}
+
+.about-principles__item span {
+  margin-bottom: 16px;
+  color: var(--blue-700);
+  font-family: var(--font-montserrat), Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.about-principles__item strong {
+  color: var(--navy-950);
+  font-family: var(--font-montserrat), Arial, sans-serif;
+  font-size: clamp(30px, 3vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+
+.about-commitment {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(255, 255, 255, 0.74), transparent 32%),
+    linear-gradient(135deg, var(--blue-100), var(--white) 72%);
+}
+
+.about-commitment__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.86fr);
+  align-items: center;
+  gap: clamp(34px, 6vw, 84px);
+}
+
+.about-commitment__main .eyebrow {
+  margin: 0 0 14px;
+}
+
+.about-commitment h2 {
+  max-width: 650px;
+  margin: 0;
+  color: var(--navy-950);
+  font-size: clamp(31px, 3.4vw, 50px);
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+}
+
+.about-commitment__main p {
+  max-width: 700px;
+  margin: 24px 0 0;
+  color: #314359;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.about-commitment__statement {
+  padding: clamp(28px, 3.5vw, 44px);
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 22px;
+  background:
+    linear-gradient(112deg, rgba(255, 255, 255, 0.78), rgba(245, 248, 252, 0.9)),
+    rgba(255, 255, 255, 0.86);
+  box-shadow: 0 22px 58px rgba(3, 21, 47, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  backdrop-filter: blur(18px) saturate(130%);
+}
+
+.about-commitment__statement p {
+  margin: 0;
+  color: var(--navy-950);
+  font-family: var(--font-montserrat), Arial, sans-serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+}
+
+.about-commitment__statement span {
+  display: block;
+  margin-top: 22px;
+  color: #314359;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.about-mission {
+  padding: clamp(72px, 8vw, 112px) 0;
+  background: var(--white);
+}
+
+.about-mission__inner {
+  padding: clamp(38px, 5vw, 64px);
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--blue-700), var(--blue-600));
+  color: var(--white);
+  box-shadow: 0 18px 44px rgba(7, 85, 183, 0.18);
+}
+
+.about-mission__eyebrow {
+  margin: 0 0 18px;
+  font-family: var(--font-montserrat), Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.about-mission__inner > p:last-child {
+  max-width: 890px;
+  margin: 0;
+  font-family: var(--font-montserrat), Arial, sans-serif;
+  font-size: clamp(32px, 4vw, 58px);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+}
+
+.about-final-cta {
+  padding: 0 0 clamp(72px, 8vw, 104px);
+  background: var(--white);
+}
+
+.about-final-cta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding-top: 36px;
+  border-top: 1px solid var(--line);
+}
+
+.about-final-cta .eyebrow {
+  margin: 0 0 10px;
+}
+
+.about-final-cta h2 {
+  max-width: 620px;
+  margin: 0;
+  color: var(--navy-950);
+  font-size: clamp(28px, 3vw, 42px);
+  letter-spacing: -0.04em;
+  line-height: 1.14;
+}
+
 .quote-banner {
   position: relative;
   z-index: 3;
@@ -1722,6 +1990,43 @@ button:focus-visible {
     padding: 36px 0 80px;
   }
 
+  .about-hero {
+    background:
+      radial-gradient(circle at -8% -18%, rgba(234, 243, 255, 0.96) 0 34%, transparent 35%),
+      linear-gradient(180deg, var(--white) 0%, var(--white) 58%, var(--blue-100) 58%, var(--blue-100) 100%);
+  }
+
+  .about-hero__grid,
+  .about-story__grid,
+  .about-commitment__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-hero__content,
+  .about-story h2,
+  .about-story__lead,
+  .about-commitment h2,
+  .about-commitment__main p {
+    max-width: 760px;
+  }
+
+  .about-hero__visual {
+    min-height: 390px;
+  }
+
+  .about-principles {
+    padding-bottom: 66px;
+  }
+
+  .about-principles__item {
+    padding-inline: 24px;
+  }
+
+  .about-final-cta__inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .quote-banner__content {
     max-width: 640px;
     padding: 34px 36px;
@@ -1951,6 +2256,86 @@ button:focus-visible {
   }
 
   .about__cta {
+    width: 100%;
+  }
+
+  .about-hero {
+    padding: 48px 0 54px;
+  }
+
+  .about-hero h1 {
+    font-size: clamp(40px, 12vw, 54px);
+  }
+
+  .about-hero__visual {
+    min-height: 310px;
+    border-radius: 20px;
+  }
+
+  .about-story__grid,
+  .about-commitment__grid {
+    gap: 28px;
+  }
+
+  .about-story h2,
+  .about-commitment h2 {
+    font-size: 30px;
+  }
+
+  .about-story__lead {
+    font-size: 18px;
+  }
+
+  .about-principles {
+    padding: 4px 0 58px;
+  }
+
+  .about-principles__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-principles__item {
+    min-height: 112px;
+    padding: 24px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .about-principles__item:last-child {
+    border-bottom: 0;
+  }
+
+  .about-principles__item strong {
+    font-size: 34px;
+  }
+
+  .about-commitment__statement {
+    padding: 26px 22px;
+    border-radius: 18px;
+  }
+
+  .about-commitment__statement p {
+    font-size: 28px;
+  }
+
+  .about-mission {
+    padding: 58px 0;
+  }
+
+  .about-mission__inner {
+    padding: 32px 24px;
+    border-radius: 18px;
+  }
+
+  .about-mission__inner > p:last-child {
+    font-size: 30px;
+  }
+
+  .about-final-cta {
+    padding-bottom: 66px;
+  }
+
+  .about-final-cta .button {
     width: 100%;
   }
 

@@ -74,6 +74,21 @@ test("renders the services directory from the central collection", async () => {
   assert.equal((html.match(/class="services-page-card"/g) ?? []).length, 5);
 });
 
+test("renders the editorial about page with the official story and mission", async () => {
+  const response = await render("/a-propos");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /Une entreprise fondée sur la confiance, le travail et l&#x27;excellence\./);
+  assert.match(html, /Christopher Salgado et Patricia Romero/);
+  assert.match(html, /Confiance/);
+  assert.match(html, /Travail/);
+  assert.match(html, /Excellence/);
+  assert.match(html, /Notre mission est simple/);
+  assert.match(html, /href="\/soumission"/);
+  assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
+});
+
 test("renders every service slug with the reusable detail template", async () => {
   const services = [
     ["nettoyage-commercial", "Bureaux et espaces corporatifs"],

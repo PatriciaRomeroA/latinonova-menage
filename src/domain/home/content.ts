@@ -9,7 +9,7 @@ const serviceLinks: readonly NavigationItem[] = SERVICES.map((service) => ({
 const navigationLinks: readonly NavigationItem[] = [
   { label: "Accueil", href: "/#accueil" },
   { label: "Services", href: "/services" },
-  { label: "À propos", href: "/#a-propos" },
+  { label: "À propos", href: "/a-propos" },
   { label: "Soumission", href: "/soumission" },
   { label: "Contact", href: "/#contact" },
 ];

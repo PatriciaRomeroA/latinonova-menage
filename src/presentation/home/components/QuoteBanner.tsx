@@ -1,4 +1,5 @@
 import { AppIcon } from "@/src/shared/icons/AppIcon";
+import { QuoteTrigger } from "@/src/presentation/quote/components/QuoteTrigger";
 
 export function QuoteBanner() {
   return (
@@ -11,15 +12,14 @@ export function QuoteBanner() {
             Parlez-nous de vos besoins et recevez une estimation claire,
             adaptée à votre espace et à votre horaire.
           </p>
-          <a
+          <QuoteTrigger
             className="button button--light"
-            href="mailto:info@latinovamenage.com?subject=Demande%20de%20soumission"
           >
             Demander maintenant
             <span className="button__icon-slot" aria-hidden="true">
               <AppIcon className="button__icon" name="arrowRight" size={14} />
             </span>
-          </a>
+          </QuoteTrigger>
           <small>Sans engagement · Réponse rapide</small>
         </div>
       </div>

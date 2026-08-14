@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { NavigationItem } from "@/src/domain/home/models";
+import { QuoteTrigger } from "@/src/presentation/quote/components/QuoteTrigger";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type MobileNavigationProps = {
@@ -11,13 +13,9 @@ type MobileNavigationProps = {
 
 export function MobileNavigation({ navigation }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -58,10 +56,11 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
 
   function closeMenu() {
     setIsOpen(false);
+    setOpenGroup(null);
   }
 
   const menuOverlay =
-    isOpen && mounted
+    isOpen
       ? createPortal(
           <div className="mobile-nav__backdrop" onClick={closeMenu}>
             <div
@@ -89,18 +88,54 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
               </button>
               <p>Navigation</p>
               <nav aria-label="Navigation mobile principale">
-                {navigation.map((item) => (
-                  <a href={item.href} key={item.label} onClick={closeMenu}>
-                    {item.label}
-                    <span className="mobile-nav__arrow-slot" aria-hidden="true">
-                      <AppIcon className="mobile-nav__arrow-icon" name="arrowRight" size={12} />
-                    </span>
-                  </a>
-                ))}
+                {navigation.map((item) => {
+                  if (!item.children?.length) {
+                    return (
+                      <a href={item.href} key={item.label} onClick={closeMenu}>
+                        {item.label}
+                        <span className="mobile-nav__arrow-slot" aria-hidden="true">
+                          <AppIcon className="mobile-nav__arrow-icon" name="arrowRight" size={12} />
+                        </span>
+                      </a>
+                    );
+                  }
+
+                  const isExpanded = openGroup === item.label;
+
+                  return (
+                    <div className="mobile-nav__group" key={item.label}>
+                      <button
+                        type="button"
+                        className={`mobile-nav__parent${isExpanded ? " is-open" : ""}`}
+                        aria-expanded={isExpanded}
+                        onClick={() =>
+                          setOpenGroup((current) => (current === item.label ? null : item.label))
+                        }
+                      >
+                        {item.label}
+                        <span className="mobile-nav__arrow-slot" aria-hidden="true">
+                          <AppIcon className="mobile-nav__chevron" name="chevronDown" size={14} />
+                        </span>
+                      </button>
+                      {isExpanded ? (
+                        <div className="mobile-nav__submenu">
+                          <Link href="/services" onClick={closeMenu}>
+                            Tous les services
+                          </Link>
+                          {item.children.map((child) => (
+                            <a href={child.href} key={child.href} onClick={closeMenu}>
+                              {child.label}
+                            </a>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </nav>
-              <a className="button button--primary" href="#soumission" onClick={closeMenu}>
+              <QuoteTrigger className="button button--primary" onClick={closeMenu}>
                 Soumission gratuite
-              </a>
+              </QuoteTrigger>
             </div>
           </div>,
           document.body,

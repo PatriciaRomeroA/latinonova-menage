@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Benefit } from "@/src/domain/home/models";
 import { imageCatalog } from "@/src/infrastructure/assets/image-catalog";
+import { QuoteTrigger } from "@/src/presentation/quote/components/QuoteTrigger";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type HeroSectionProps = {
@@ -42,12 +43,12 @@ export function HeroSection({ benefits }: HeroSectionProps) {
             ))}
           </div>
           <div className="hero__actions">
-            <a className="button button--primary" href="#soumission">
+            <QuoteTrigger className="button button--primary">
               Obtenir une soumission gratuite
               <span className="button__icon-slot" aria-hidden="true">
                 <AppIcon className="button__icon" name="arrowRight" size={14} />
               </span>
-            </a>
+            </QuoteTrigger>
             <a className="button button--outline" href="#services">
               Voir nos services
             </a>

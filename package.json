@@ -17,6 +17,7 @@
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@iconify-json/lucide": "^1.2.121",
     "@iconify-json/simple-icons": "^1.2.93",
     "@iconify/react": "^6.0.2",

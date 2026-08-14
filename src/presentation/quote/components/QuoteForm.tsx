@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import type { SoumissionFormValues } from "@/src/domain/quote/soumission";
 import type { Service } from "@/src/domain/services/models";
 import type { ServiceSlug } from "@/src/domain/services/services";
+import { sendSoumission } from "@/src/infrastructure/email/send-soumission";
 import { AppIcon } from "@/src/shared/icons/AppIcon";
 
 type QuoteFormProps = {
@@ -10,21 +12,9 @@ type QuoteFormProps = {
   readonly services: readonly Service[];
 };
 
-type WorkAtHeights = "" | "yes" | "no";
+type QuoteFormErrors = Partial<Record<keyof SoumissionFormValues, string>>;
 
-type QuoteFormValues = {
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly company: string;
-  readonly email: string;
-  readonly phone: string;
-  readonly service: string;
-  readonly workAtHeights: WorkAtHeights;
-  readonly subject: string;
-  readonly context: string;
-};
-
-type QuoteFormErrors = Partial<Record<keyof QuoteFormValues, string>>;
+type SubmitState = "idle" | "success" | "error";
 
 const SUBJECT_OPTIONS = [
   { value: "soumission", label: "Demande de soumission" },
@@ -32,7 +22,7 @@ const SUBJECT_OPTIONS = [
   { value: "visite", label: "Planifier une visite" },
 ] as const;
 
-const emptyValues: QuoteFormValues = {
+const emptyValues: SoumissionFormValues = {
   firstName: "",
   lastName: "",
   company: "",
@@ -44,7 +34,7 @@ const emptyValues: QuoteFormValues = {
   context: "",
 };
 
-function validate(values: QuoteFormValues): QuoteFormErrors {
+function validate(values: SoumissionFormValues): QuoteFormErrors {
   const errors: QuoteFormErrors = {};
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phonePattern = /^[+\d().\-\s]{7,}$/;
@@ -82,27 +72,29 @@ function validate(values: QuoteFormValues): QuoteFormErrors {
 
 export function QuoteForm({ initialService, services }: QuoteFormProps) {
   const formId = useId();
-  const [values, setValues] = useState<QuoteFormValues>({
+  const [values, setValues] = useState<SoumissionFormValues>({
     ...emptyValues,
     service: initialService ?? "",
   });
   const [errors, setErrors] = useState<QuoteFormErrors>({});
   const [hasTriedSubmit, setHasTriedSubmit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const [submitState, setSubmitState] = useState<SubmitState>("idle");
 
   const serviceOptions = useMemo(
     () => services.map((service) => ({ value: service.slug, label: service.title })),
     [services],
   );
 
-  function updateValue<K extends keyof QuoteFormValues>(
+  function updateValue<K extends keyof SoumissionFormValues>(
     key: K,
-    value: QuoteFormValues[K],
+    value: SoumissionFormValues[K],
   ) {
-    setValues((current) => ({ ...current, [key]: value }));
+    const nextValues = { ...values, [key]: value };
+    setValues(nextValues);
+    setSubmitState("idle");
     if (hasTriedSubmit) {
-      setErrors(validate({ ...values, [key]: value }));
+      setErrors(validate(nextValues));
     }
   }
 
@@ -116,19 +108,27 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
     const nextErrors = validate(values);
     setErrors(nextErrors);
     setHasTriedSubmit(true);
-    setSubmitMessage(null);
+    setSubmitState("idle");
 
     if (Object.keys(nextErrors).length > 0) {
       return;
     }
 
     setIsSubmitting(true);
-    console.log("Soumission form payload:", values);
-    await Promise.resolve();
-    setIsSubmitting(false);
-    setSubmitMessage(
-      "L'envoi en ligne est prêt côté interface. Il reste à connecter le service d'envoi pour transmettre cette demande automatiquement.",
-    );
+    try {
+      await sendSoumission(values);
+      setValues({
+        ...emptyValues,
+        service: initialService ?? "",
+      });
+      setErrors({});
+      setHasTriedSubmit(false);
+      setSubmitState("success");
+    } catch {
+      setSubmitState("error");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -267,9 +267,15 @@ export function QuoteForm({ initialService, services }: QuoteFormProps) {
         />
       </Field>
 
-      {submitMessage ? (
+      {submitState === "success" ? (
         <p className="quote-form__status" role="status">
-          {submitMessage}
+          Votre demande a été envoyée avec succès. Nous vous contacterons prochainement.
+        </p>
+      ) : null}
+
+      {submitState === "error" ? (
+        <p className="quote-form__status quote-form__status--error" role="alert">
+          Une erreur est survenue lors de l’envoi de votre demande. Veuillez réessayer.
         </p>
       ) : null}
 

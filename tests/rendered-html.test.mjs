@@ -122,7 +122,7 @@ test("renders the soumission page with the reusable quote form", async () => {
 });
 
 test("centralizes the quote form and derives service options from SERVICES", async () => {
-  const [formSource, serviceDetailSource] = await Promise.all([
+  const [formSource, serviceDetailSource, emailServiceSource, emailConfigSource, quoteTypesSource] = await Promise.all([
     readFile(
       new URL("../src/presentation/quote/components/QuoteForm.tsx", import.meta.url),
       "utf8",
@@ -134,13 +134,51 @@ test("centralizes the quote form and derives service options from SERVICES", asy
       ),
       "utf8",
     ),
+    readFile(
+      new URL("../src/infrastructure/email/send-soumission.ts", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../src/infrastructure/email/emailjs-config.ts", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../src/domain/quote/soumission.ts", import.meta.url),
+      "utf8",
+    ),
   ]);
 
   assert.match(formSource, /services\.map/);
   assert.match(formSource, /Sélectionner un service/);
+  assert.match(formSource, /sendSoumission\(values\)/);
+  assert.match(formSource, /isSubmitting/);
+  assert.match(formSource, /role="status"/);
+  assert.match(formSource, /role="alert"/);
+  assert.doesNotMatch(formSource, /console\.log/);
   assert.doesNotMatch(formSource, /Requested sub-service/i);
   assert.doesNotMatch(formSource, /requestedSubService/i);
   assert.match(serviceDetailSource, /initialService=\{service\.slug/);
+  assert.match(emailServiceSource, /@emailjs\/browser/);
+  assert.match(emailServiceSource, /emailjs\.send\(/);
+  assert.match(emailServiceSource, /type \{ SoumissionFormValues \}/);
+  for (const key of [
+    "firstName",
+    "lastName",
+    "company",
+    "email",
+    "phone",
+    "service",
+    "subject",
+    "workAtHeights",
+    "context",
+  ]) {
+    assert.match(emailServiceSource, new RegExp(`${key}: data\\.${key}`));
+    assert.match(quoteTypesSource, new RegExp(`readonly ${key}: string|readonly ${key}: WorkAtHeights`));
+  }
+  assert.match(emailConfigSource, /NEXT_PUBLIC_EMAILJS_SERVICE_ID/);
+  assert.match(emailConfigSource, /NEXT_PUBLIC_EMAILJS_TEMPLATE_ID/);
+  assert.match(emailConfigSource, /NEXT_PUBLIC_EMAILJS_PUBLIC_KEY/);
+  assert.doesNotMatch(emailConfigSource, /service_07dv8o9/);
 });
 
 test("returns the framework not-found response for an invalid service slug", async () => {
